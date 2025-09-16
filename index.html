@@ -11,17 +11,24 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <h1 class="app-title">Little Linguist</h1>
-            <div class="age-input-container">
-                <label for="baby-age" class="age-label">Baby's Age</label>
-                <div class="age-input-wrapper">
-                    <input type="number" id="baby-age" min="0" max="60" value="12" class="age-input" inputmode="numeric" pattern="[0-9]*">
-                    <span class="age-unit">months</span>
+            <div class="header-title">Little Linguist</div>
+            <div class="child-info-container">
+                <div class="name-input-container">
+                    <label for="child-name" class="name-label">Child's Name</label>
+                    <input type="text" id="child-name" placeholder="Enter your child's name" class="name-input">
+                </div>
+                <div class="age-input-container">
+                    <label for="baby-age" class="age-label">Age</label>
+                    <div class="age-input-wrapper">
+                        <input type="number" id="baby-age" min="0" max="60" value="12" class="age-input" inputmode="numeric" pattern="[0-9]*">
+                        <span class="age-unit">months</span>
+                    </div>
                 </div>
             </div>
         </header>
