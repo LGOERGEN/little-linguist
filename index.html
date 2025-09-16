@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Baby language development tracker for English and Portuguese">
+    <meta name="theme-color" content="#6c9bd1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Little Linguist - Language Development Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="app-title">Little Linguist</h1>
+            <div class="age-input-container">
+                <label for="baby-age" class="age-label">Baby's Age</label>
+                <div class="age-input-wrapper">
+                    <input type="number" id="baby-age" min="0" max="60" value="12" class="age-input" inputmode="numeric" pattern="[0-9]*">
+                    <span class="age-unit">months</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Statistics Dashboard -->
+        <section class="stats-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-speaking">0</div>
+                    <div class="stat-label">Words Speaking</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-understanding">0</div>
+                    <div class="stat-label">Words Understanding</div>
+                </div>
+                <div class="stat-card language-breakdown">
+                    <div class="language-bars">
+                        <div class="language-bar">
+                            <span class="language-name">English</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill english" id="english-progress"></div>
+                            </div>
+                            <span class="percentage" id="english-percentage">0%</span>
+                        </div>
+                        <div class="language-bar">
+                            <span class="language-name">Portuguese</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill portuguese" id="portuguese-progress"></div>
+                            </div>
+                            <span class="percentage" id="portuguese-percentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone-indicator" id="milestone-indicator">
+                <span class="milestone-text">Great progress for this age! 🌟</span>
+            </div>
+
+            <!-- Timeline section -->
+            <div class="timeline-section">
+                <button class="timeline-toggle" id="timeline-toggle">
+                    📈 View Words Timeline
+                    <span class="timeline-toggle-icon">▼</span>
+                </button>
+                <div class="timeline-content" id="timeline-content">
+                    <div class="timeline-chart-container">
+                        <h3 class="timeline-title">Cumulative Words Over Time</h3>
+                        <div class="timeline-chart" id="timeline-chart">
+                            <!-- Chart will be generated here -->
+                        </div>
+                        <div class="timeline-legend">
+                            <div class="legend-item">
+                                <div class="legend-color english-color"></div>
+                                <span>English Words</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color portuguese-color"></div>
+                                <span>Portuguese Words</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color total-color"></div>
+                                <span>Total Words</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search words..." class="search-input">
+                <button class="search-clear" id="search-clear">×</button>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="speaking">Speaking</button>
+                <button class="filter-btn" data-filter="understanding">Understanding</button>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <main class="categories-container" id="categories-container">
+            <!-- Categories will be dynamically generated -->
+        </main>
+
+        <!-- Export Button -->
+        <section class="export-section">
+            <button class="export-btn" id="export-btn">
+                📤 Export Progress
+            </button>
+            <div class="owner-credit">Created by Luana Goergen</div>
+        </section>
+    </div>
+
+    <!-- Custom Word Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add Custom Word</h3>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="custom-word-en">Word</label>
+                    <input type="text" id="custom-word-en" placeholder="Enter word">
+                </div>
+                <div class="input-group">
+                    <label for="custom-word-category">Category</label>
+                    <select id="custom-word-category">
+                        <option value="">Select category...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="modal-save">Add Word</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=2.0"></script>
+</body>
+</html>
