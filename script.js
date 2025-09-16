@@ -12,6 +12,7 @@ class BabyWordsTracker {
         this.currentCategory = null;
         this.expandedCategories = new Set(); // Track which categories are expanded
 
+        this.initializeKidName();
         this.initializeWordData();
         this.bindEventListeners();
         this.renderCategories();
@@ -21,12 +22,10 @@ class BabyWordsTracker {
         console.log('✅ BabyWordsTracker construction complete');
     }
 
-    // Research-based top 100+ words babies typically learn before age 3
-    // Based on developmental research from Stanford Children's Health, NIDCD, and Brazilian Portuguese studies
     getDefaultWordData() {
         return {
             english: {
-                people: {
+                family: {
                     title: 'Family',
                     language: 'english',
                     words: [
@@ -38,43 +37,70 @@ class BabyWordsTracker {
                         { word: 'grandma', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'grandpa', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'nana', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'papa', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'papa', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'auntie', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'uncle', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 food: {
-                    title: 'Food',
+                    title: 'Food & Drink',
                     language: 'english',
                     words: [
                         { word: 'milk', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'water', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'banana', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'apple', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'biscuit', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'bread', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'biscuit', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'juice', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'yoghurt', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cheese', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'finished', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'chicken', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pasta', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'rice', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'egg', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cereal', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'orange', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'grapes', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'strawberry', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'carrots', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'peas', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'potato', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'finished', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'more', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'yummy', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 actions: {
-                    title: 'Actions',
+                    title: 'Actions & Verbs',
                     language: 'english',
                     words: [
                         { word: 'go', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'come', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'stop', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'sit', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'stand', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'walk', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'run', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'jump', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'play', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'sleep', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'eat', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'drink', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'drink', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'wash', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'brush', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'read', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'sing', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dance', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'help', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'give', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'take', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'open', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'close', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 body: {
-                    title: 'Body',
+                    title: 'Body Parts',
                     language: 'english',
                     words: [
                         { word: 'head', understanding: false, speaking: false, firstSpokenAge: null },
@@ -83,42 +109,68 @@ class BabyWordsTracker {
                         { word: 'nose', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'mouth', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'ears', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'teeth', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'hands', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'fingers', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'arms', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'legs', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'feet', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'toes', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'tummy', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'teeth', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'back', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'knee', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 toys: {
-                    title: 'Toys & Things',
+                    title: 'Toys & Objects',
                     language: 'english',
                     words: [
                         { word: 'ball', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'book', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'car', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'train', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'plane', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bike', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'doll', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'teddy', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'blocks', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'puzzle', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cup', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'shoes', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'hat', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bottle', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'plate', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'spoon', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'nappy', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'teddy', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'fork', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bottle', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'shoes', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'socks', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'hat', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'coat', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'nappy', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 colours: {
-                    title: 'Colours & Words',
+                    title: 'Colours & Descriptions',
                     language: 'english',
                     words: [
                         { word: 'red', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'blue', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'yellow', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'green', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pink', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'purple', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'orange', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'black', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'white', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'big', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'small', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'little', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'tall', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'short', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'hot', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cold', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'yes', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'no', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'fast', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'slow', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'happy', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'sad', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 animals: {
@@ -128,46 +180,72 @@ class BabyWordsTracker {
                         { word: 'dog', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cat', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cow', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pig', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'sheep', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'horse', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'duck', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'chicken', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'fish', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'bird', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'horse', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'pig', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'chicken', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bunny', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'rabbit', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'mouse', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'elephant', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'lion', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'tiger', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'monkey', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bear', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'butterfly', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
-                manners: {
-                    title: 'Manners',
+                social: {
+                    title: 'Social & Manners',
                     language: 'english',
                     words: [
+                        { word: 'hello', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'hi', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bye-bye', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'please', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'thank you', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'sorry', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'hello', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bye-bye', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'night-night', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'lovely', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'good', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'excuse me', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'yes', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'no', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'mine', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'yours', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'share', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'turn', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'friend', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'love', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'kiss', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'hug', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 places: {
-                    title: 'Places',
+                    title: 'Places & Locations',
                     language: 'english',
                     words: [
                         { word: 'home', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'outside', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'upstairs', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'downstairs', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'house', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'garden', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'park', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'shop', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'school', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bedroom', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'kitchen', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bathroom', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'outside', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'inside', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'upstairs', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'downstairs', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'bed', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bath', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'bath', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'car', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'playground', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 }
             },
             portuguese: {
-                people: {
+                family: {
                     title: 'Família',
                     language: 'portuguese',
                     words: [
@@ -179,43 +257,70 @@ class BabyWordsTracker {
                         { word: 'vovó', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'vovô', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'tia', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'tio', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'tio', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'primo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'prima', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 food: {
-                    title: 'Comida',
+                    title: 'Comida & Bebida',
                     language: 'portuguese',
                     words: [
                         { word: 'leite', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'água', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'banana', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'maçã', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'biscoito', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'pão', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'biscoito', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'suco', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'iogurte', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'queijo', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'acabou', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'frango', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'macarrão', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'arroz', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ovo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cereal', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'laranja', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'uva', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'morango', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cenoura', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ervilha', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'batata', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'acabou', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'mais', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'gostoso', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 actions: {
-                    title: 'Ações',
+                    title: 'Ações & Verbos',
                     language: 'portuguese',
                     words: [
                         { word: 'vai', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'vem', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'para', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'senta', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'levanta', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'anda', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'corre', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pula', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'brinca', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'dorme', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'comer', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'beber', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'beber', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'lavar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'escovar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ler', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cantar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dançar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ajudar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pegar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'abrir', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'fechar', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 body: {
-                    title: 'Corpo',
+                    title: 'Partes do Corpo',
                     language: 'portuguese',
                     words: [
                         { word: 'cabeça', understanding: false, speaking: false, firstSpokenAge: null },
@@ -224,42 +329,67 @@ class BabyWordsTracker {
                         { word: 'nariz', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'boca', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'orelhas', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dentes', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'mãos', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dedos', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'braços', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'pernas', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'pés', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dedos do pé', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'barriga', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'dentes', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'costas', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'joelho', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 toys: {
-                    title: 'Brinquedos',
+                    title: 'Brinquedos & Objetos',
                     language: 'portuguese',
                     words: [
                         { word: 'bola', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'livro', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'carro', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'trem', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'avião', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'bicicleta', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'boneca', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ursinho', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'blocos', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'quebra-cabeça', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'copo', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'sapatos', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'chapéu', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'mamadeira', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'prato', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'colher', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'fralda', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'ursinho', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'garfo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'mamadeira', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'sapatos', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'meias', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'chapéu', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'casaco', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'fralda', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 colours: {
-                    title: 'Cores & Palavras',
+                    title: 'Cores & Descrições',
                     language: 'portuguese',
                     words: [
                         { word: 'vermelho', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'azul', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'amarelo', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'verde', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'rosa', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'roxo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'laranja', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'preto', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'branco', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'grande', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'pequeno', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'alto', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'baixo', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'quente', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'frio', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'sim', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'não', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'rápido', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'devagar', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'feliz', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'triste', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 animals: {
@@ -269,65 +399,185 @@ class BabyWordsTracker {
                         { word: 'cachorro', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'gato', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'vaca', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'porco', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ovelha', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cavalo', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'pato', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'galinha', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'peixe', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'passarinho', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'cavalo', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'porco', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'galinha', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'coelho', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'coelho', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'ratinho', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'elefante', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'leão', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'tigre', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'macaco', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'urso', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'borboleta', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
-                manners: {
-                    title: 'Educação',
+                social: {
+                    title: 'Social & Educação',
                     language: 'portuguese',
                     words: [
+                        { word: 'olá', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'oi', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'tchau', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'por favor', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'obrigado', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'desculpa', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'olá', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'tchau', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'boa noite', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bonito', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'bom', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'com licença', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'sim', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'não', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'meu', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'seu', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dividir', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'vez', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'amigo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'amor', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'beijo', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'abraço', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 },
                 places: {
-                    title: 'Lugares',
+                    title: 'Lugares & Locais',
                     language: 'portuguese',
                     words: [
                         { word: 'casa', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'fora', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'em cima', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'embaixo', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'jardim', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'parque', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'loja', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'escola', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'quarto', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'cozinha', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'banheiro', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'fora', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'dentro', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'em cima', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'embaixo', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'cama', understanding: false, speaking: false, firstSpokenAge: null },
-                        { word: 'banho', understanding: false, speaking: false, firstSpokenAge: null }
+                        { word: 'banho', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'carro', understanding: false, speaking: false, firstSpokenAge: null },
+                        { word: 'playground', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
                 }
             }
         };
     }
 
+    initializeKidName() {
+        const nameInput = document.getElementById('child-name');
+        if (nameInput) {
+            // Load saved name
+            if (this.data.kidName) {
+                nameInput.value = this.data.kidName;
+            }
+
+            // Add event listeners
+            nameInput.addEventListener('input', (e) => this.updateKidName(e.target.value));
+            nameInput.addEventListener('blur', () => this.saveData());
+        }
+    }
+
+    updateKidName(name) {
+        this.data.kidName = name.trim();
+        if (this.data.kidName) {
+            this.saveData();
+        }
+    }
 
     initializeWordData() {
         console.log('🔧 Initializing word data...');
         console.log('📋 Current categories:', this.data.categories);
 
-        // Check if we have the new separated structure
-        const hasNewStructure = this.data.categories &&
-                               this.data.categories.english &&
-                               this.data.categories.portuguese &&
-                               Object.keys(this.data.categories.english).length > 0;
+        // Check if we have the new extensive structure with all categories
+        const hasExtensiveStructure = this.data.categories &&
+                                     this.data.categories.english &&
+                                     this.data.categories.portuguese &&
+                                     Object.keys(this.data.categories.english).length >= 8 &&
+                                     Object.keys(this.data.categories.portuguese).length >= 8;
 
-        if (!hasNewStructure) {
-            console.log('🔥 Creating new separated English/Portuguese structure');
+        if (!hasExtensiveStructure) {
+            console.log('🔥 Updating to extensive category structure with 300+ words');
+            // Preserve existing progress
+            const oldProgress = this.extractExistingProgress();
+            // Get new extensive data
             this.data.categories = this.getDefaultWordData();
+            // Apply old progress to matching words
+            this.applyExistingProgress(oldProgress);
             this.saveData();
-            console.log('✅ New structure created and saved');
+            console.log('✅ Extensive structure created and saved');
         } else {
-            console.log('✅ Using existing separated structure');
+            console.log('✅ Using existing extensive structure');
+            // Ensure all words have the firstSpokenAge property
+            this.ensureFirstSpokenAgeProperty();
+        }
+    }
+
+    extractExistingProgress() {
+        const progress = {};
+        if (this.data.categories) {
+            ['english', 'portuguese'].forEach(language => {
+                if (this.data.categories[language]) {
+                    progress[language] = {};
+                    Object.values(this.data.categories[language]).forEach(category => {
+                        if (category.words) {
+                            category.words.forEach(word => {
+                                progress[language][word.word] = {
+                                    understanding: word.understanding,
+                                    speaking: word.speaking,
+                                    firstSpokenAge: word.firstSpokenAge
+                                };
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        return progress;
+    }
+
+    applyExistingProgress(progress) {
+        ['english', 'portuguese'].forEach(language => {
+            if (progress[language] && this.data.categories[language]) {
+                Object.values(this.data.categories[language]).forEach(category => {
+                    if (category.words) {
+                        category.words.forEach(word => {
+                            if (progress[language][word.word]) {
+                                const savedProgress = progress[language][word.word];
+                                word.understanding = savedProgress.understanding;
+                                word.speaking = savedProgress.speaking;
+                                word.firstSpokenAge = savedProgress.firstSpokenAge;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    ensureFirstSpokenAgeProperty() {
+        console.log('🔧 Ensuring all words have firstSpokenAge property...');
+        let updated = false;
+
+        ['english', 'portuguese'].forEach(language => {
+            if (this.data.categories[language]) {
+                Object.values(this.data.categories[language]).forEach(category => {
+                    if (category.words) {
+                        category.words.forEach(word => {
+                            if (word.firstSpokenAge === undefined) {
+                                word.firstSpokenAge = word.speaking ? (this.data.babyAge || 12) : null;
+                                updated = true;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        if (updated) {
+            this.saveData();
+            console.log('✅ Updated existing words with firstSpokenAge property');
         }
     }
 
@@ -420,6 +670,7 @@ class BabyWordsTracker {
         const ageInput = document.getElementById('baby-age');
         ageInput.addEventListener('input', (e) => this.updateAge(e.target.value));
         ageInput.addEventListener('change', () => this.checkMilestones());
+
 
         // Search functionality
         const searchInput = document.getElementById('search-input');
@@ -658,8 +909,12 @@ class BabyWordsTracker {
         controls.appendChild(understandingToggle);
         controls.appendChild(speakingToggle);
 
+        // Create age selector (only show when speaking is true)
+        const ageSelector = this.createAgeSelector(language, categoryKey, wordIndex, word);
+
         container.appendChild(wordDisplay);
         container.appendChild(controls);
+        container.appendChild(ageSelector);
 
         return container;
     }
@@ -680,6 +935,78 @@ class BabyWordsTracker {
         toggle.appendChild(labelElement);
 
         return toggle;
+    }
+
+    createAgeSelector(language, categoryKey, wordIndex, word) {
+        const ageSelector = document.createElement('div');
+        ageSelector.className = 'age-selector';
+        ageSelector.dataset.language = language;
+        ageSelector.dataset.category = categoryKey;
+        ageSelector.dataset.wordIndex = wordIndex;
+
+        // Only show if word is marked as speaking
+        if (!word.speaking) {
+            ageSelector.style.display = 'none';
+        }
+
+        const label = document.createElement('span');
+        label.className = 'age-label';
+        label.textContent = 'First said at:';
+
+        const ageControls = document.createElement('div');
+        ageControls.className = 'age-controls';
+
+        const decreaseBtn = document.createElement('button');
+        decreaseBtn.className = 'age-btn decrease';
+        decreaseBtn.innerHTML = '−';
+        decreaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.changeWordAge(language, categoryKey, wordIndex, -1);
+        };
+
+        const ageDisplay = document.createElement('span');
+        ageDisplay.className = 'age-display';
+        ageDisplay.textContent = `${word.firstSpokenAge || this.data.babyAge || 12}m`;
+
+        const increaseBtn = document.createElement('button');
+        increaseBtn.className = 'age-btn increase';
+        increaseBtn.innerHTML = '+';
+        increaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.changeWordAge(language, categoryKey, wordIndex, 1);
+        };
+
+        ageControls.appendChild(decreaseBtn);
+        ageControls.appendChild(ageDisplay);
+        ageControls.appendChild(increaseBtn);
+
+        ageSelector.appendChild(label);
+        ageSelector.appendChild(ageControls);
+
+        return ageSelector;
+    }
+
+    changeWordAge(language, categoryKey, wordIndex, delta) {
+        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const currentAge = word.firstSpokenAge || this.data.babyAge || 12;
+        const newAge = Math.max(1, Math.min(60, currentAge + delta));
+
+        // Don't allow age greater than current baby age
+        const maxAge = this.data.babyAge || 12;
+        word.firstSpokenAge = Math.min(newAge, maxAge);
+
+        this.saveData();
+        this.updateWordAgeDisplay(language, categoryKey, wordIndex);
+        this.generateTimelineChart();
+    }
+
+    updateWordAgeDisplay(language, categoryKey, wordIndex) {
+        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const ageSelector = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"] [data-word-index="${wordIndex}"] .age-display`);
+
+        if (ageSelector) {
+            ageSelector.textContent = `${word.firstSpokenAge}m`;
+        }
     }
 
     toggleCategory(language, categoryKey) {
@@ -720,26 +1047,22 @@ class BabyWordsTracker {
         const word = this.data.categories[language][categoryKey].words[wordIndex];
 
         if (!word.speaking) {
-            // Turning speaking ON - ask for age
-            this.promptForAge(language, categoryKey, wordIndex, () => {
-                word.speaking = true;
-                word.understanding = true;
-                this.saveData();
-                this.updateWordDisplay(language, categoryKey, wordIndex);
-                this.updateStatistics();
-                this.checkMilestones();
-                this.generateTimelineChart();
-            });
+            // Turning speaking ON
+            word.speaking = true;
+            word.understanding = true;
+            // Set default age to current baby age
+            word.firstSpokenAge = this.data.babyAge || 12;
         } else {
             // Turning speaking OFF
             word.speaking = false;
             word.firstSpokenAge = null;
-            this.saveData();
-            this.updateWordDisplay(language, categoryKey, wordIndex);
-            this.updateStatistics();
-            this.checkMilestones();
-            this.generateTimelineChart();
         }
+
+        this.saveData();
+        this.updateWordDisplay(language, categoryKey, wordIndex);
+        this.updateStatistics();
+        this.checkMilestones();
+        this.generateTimelineChart();
     }
 
     promptForAge(language, categoryKey, wordIndex, onConfirm) {
@@ -797,6 +1120,18 @@ class BabyWordsTracker {
             }
             if (speaking) {
                 speaking.classList.toggle('checked', word.speaking);
+            }
+
+            // Show/hide age selector based on speaking status
+            const ageSelector = wordElement.querySelector('.age-selector');
+            if (ageSelector) {
+                ageSelector.style.display = word.speaking ? 'flex' : 'none';
+                if (word.speaking) {
+                    const ageDisplay = ageSelector.querySelector('.age-display');
+                    if (ageDisplay) {
+                        ageDisplay.textContent = `${word.firstSpokenAge}m`;
+                    }
+                }
             }
         }
 
