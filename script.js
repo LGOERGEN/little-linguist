@@ -1427,7 +1427,7 @@ class BabyWordsTracker {
     }
 
     renderTimelineChart(container, wordData) {
-        console.log('📊 Rendering bar chart with data:', wordData);
+        console.log('📊 Rendering cumulative bar chart with data:', wordData);
 
         if (wordData.length === 0) {
             this.renderEmptyChart(container);
@@ -1443,10 +1443,27 @@ class BabyWordsTracker {
             ageGroups[word.age][word.language]++;
         });
 
-        console.log('📊 Age groups:', ageGroups);
+        console.log('📊 Age groups (individual):', ageGroups);
 
+        // Create cumulative counts
         const ages = Object.keys(ageGroups).sort((a, b) => parseInt(a) - parseInt(b));
-        const maxWords = Math.max(...ages.map(age => ageGroups[age].english + ageGroups[age].portuguese), 5);
+        const cumulativeData = {};
+        let cumulativeEnglish = 0;
+        let cumulativePortuguese = 0;
+
+        ages.forEach(age => {
+            cumulativeEnglish += ageGroups[age].english;
+            cumulativePortuguese += ageGroups[age].portuguese;
+            cumulativeData[age] = {
+                english: cumulativeEnglish,
+                portuguese: cumulativePortuguese,
+                total: cumulativeEnglish + cumulativePortuguese
+            };
+        });
+
+        console.log('📊 Cumulative data:', cumulativeData);
+
+        const maxWords = Math.max(...ages.map(age => cumulativeData[age].total), 5);
 
         let html = '<div class="chart-content">';
 
@@ -1454,21 +1471,23 @@ class BabyWordsTracker {
         html += '<div class="bar-chart" style="display: flex; align-items: end; height: 150px; padding: 10px; gap: 6px; background: #f8f9fa; border-radius: 8px; overflow-x: auto;">';
 
         ages.forEach(age => {
-            const englishCount = ageGroups[age].english;
-            const portugueseCount = ageGroups[age].portuguese;
-            const total = englishCount + portugueseCount;
+            const englishCount = cumulativeData[age].english;
+            const portugueseCount = cumulativeData[age].portuguese;
+            const total = cumulativeData[age].total;
 
+            // Calculate heights as percentages of the bar area (stacked)
             const englishHeight = Math.max((englishCount / maxWords) * 100, englishCount > 0 ? 12 : 0);
             const portugueseHeight = Math.max((portugueseCount / maxWords) * 100, portugueseCount > 0 ? 12 : 0);
 
             html += `
                 <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-                    <div style="display: flex; flex-direction: column; align-items: center; height: 120px; justify-content: end; gap: 1px; width: 30px;">
-                        ${englishCount > 0 ? `<div style="width: 100%; background: #6c9bd1; height: ${englishHeight}px; border-radius: 2px; min-height: 12px;"></div>` : ''}
-                        ${portugueseCount > 0 ? `<div style="width: 100%; background: #f4a261; height: ${portugueseHeight}px; border-radius: 2px; min-height: 12px;"></div>` : ''}
+                    <div style="display: flex; flex-direction: column; align-items: center; height: 120px; justify-content: end; width: 30px;">
+                        <div style="width: 100%; height: ${Math.max((total / maxWords) * 100, total > 0 ? 12 : 0)}px; background: linear-gradient(to top, #f4a261 0%, #f4a261 ${(portugueseCount/total)*100}%, #6c9bd1 ${(portugueseCount/total)*100}%, #6c9bd1 100%); border-radius: 2px; min-height: ${total > 0 ? 12 : 0}px; position: relative;">
+                            ${total > 0 ? `<div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 8px; color: white; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">${total}</div>` : ''}
+                        </div>
                     </div>
                     <div style="font-size: 11px; margin-top: 6px; color: #6c757d; font-weight: 600;">${age}m</div>
-                    <div style="font-size: 9px; color: #6c757d;">${total}</div>
+                    <div style="font-size: 9px; color: #6c757d;">🇬🇧${englishCount} 🇧🇷${portugueseCount}</div>
                 </div>
             `;
         });
@@ -1480,14 +1499,16 @@ class BabyWordsTracker {
             <div style="display: flex; justify-content: center; gap: 16px; margin-top: 12px; font-size: 11px;">
                 <div style="display: flex; align-items: center; gap: 4px;">
                     <div style="width: 12px; height: 12px; background: #6c9bd1; border-radius: 2px;"></div>
-                    <span>English</span>
+                    <span>English (Cumulative)</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 4px;">
                     <div style="width: 12px; height: 12px; background: #f4a261; border-radius: 2px;"></div>
-                    <span>Portuguese</span>
+                    <span>Portuguese (Cumulative)</span>
                 </div>
             </div>
         `;
+
+        html += '<div style="text-align: center; margin-top: 8px; font-size: 10px; color: #6c757d; font-style: italic;">Shows total words learned by each age</div>';
 
         html += '</div>';
         container.innerHTML = html;
