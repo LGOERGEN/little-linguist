@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><title>Create LL Icons</title></head>
+<body>
+<script>
+function createAndDownloadIcon(size, filename) {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Same gradient background
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#6c9bd1');
+    gradient.addColorStop(0.5, '#a8c09a');
+    gradient.addColorStop(1, '#f4a261');
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // White "LL" letters
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${size * 0.45}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('LL', size / 2, size / 2);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+// Create all sizes
+const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+sizes.forEach((size, i) => {
+    setTimeout(() => {
+        createAndDownloadIcon(size, `icon-${size}x${size}.png`);
+        if (i === sizes.length - 1) {
+            document.body.innerHTML = '<h2>✅ All icons downloaded!</h2><p>Move them to the icons/ folder</p>';
+        }
+    }, i * 500);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Baby Words Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .reset-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .back-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reset Baby Words Data</h1>
+    <p>Click this button to clear all saved data and force the app to use the new language structure:</p>
+
+    <button class="reset-btn" onclick="resetData()">🗑️ Clear All Data</button>
+
+    <br><br>
+
+    <a href="index.html">
+        <button class="back-btn">🏠 Back to App</button>
+    </a>
+
+    <div id="status"></div>
+
+    <script>
+        function resetData() {
+            localStorage.removeItem('babyWordsData');
+            document.getElementById('status').innerHTML =
+                '<p style="color: green; margin-top: 20px;">✅ Data cleared! The app will now use the new language structure when you visit it.</p>';
+        }
+    </script>
+</body>
+</html>

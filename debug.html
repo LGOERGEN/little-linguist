@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Baby Words</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .pass { color: green; }
+        .fail { color: red; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Baby Words Debug Test</h1>
+
+    <div class="debug-section">
+        <h3>1. JavaScript Loading Test</h3>
+        <div id="js-test">❌ JavaScript not loaded</div>
+    </div>
+
+    <div class="debug-section">
+        <h3>2. Data Structure Test</h3>
+        <div id="data-test">❌ Data not initialized</div>
+        <pre id="data-output"></pre>
+    </div>
+
+    <div class="debug-section">
+        <h3>3. Category Rendering Test</h3>
+        <div id="render-test">❌ Categories not rendered</div>
+        <pre id="render-output"></pre>
+    </div>
+
+    <div class="debug-section">
+        <h3>4. Clear Data & Reload</h3>
+        <button onclick="clearAndReload()">🗑️ Clear localStorage & Reload</button>
+    </div>
+
+    <script>
+        // Test 1: JavaScript loading
+        document.getElementById('js-test').innerHTML = '✅ JavaScript loaded successfully';
+        document.getElementById('js-test').className = 'pass';
+
+        // Test data structure
+        function testDataStructure() {
+            localStorage.removeItem('babyWordsData'); // Clear old data
+
+            // Simulate the new data structure
+            const newData = {
+                categories: {
+                    english: {
+                        firstWords: {
+                            title: 'First Words (10-15 months)',
+                            icon: '👶',
+                            language: 'english',
+                            words: [
+                                { word: 'mama', understanding: false, speaking: false, firstSpokenAge: null },
+                                { word: 'dada', understanding: false, speaking: false, firstSpokenAge: null }
+                            ]
+                        }
+                    },
+                    portuguese: {
+                        firstWords: {
+                            title: 'Primeiras Palavras (10-15 meses)',
+                            icon: '👶',
+                            language: 'portuguese',
+                            words: [
+                                { word: 'mamãe', understanding: false, speaking: false, firstSpokenAge: null },
+                                { word: 'papai', understanding: false, speaking: false, firstSpokenAge: null }
+                            ]
+                        }
+                    }
+                },
+                babyAge: 12
+            };
+
+            localStorage.setItem('babyWordsData', JSON.stringify(newData));
+
+            document.getElementById('data-test').innerHTML = '✅ New data structure created';
+            document.getElementById('data-test').className = 'pass';
+            document.getElementById('data-output').textContent = JSON.stringify(newData, null, 2);
+        }
+
+        function clearAndReload() {
+            localStorage.removeItem('babyWordsData');
+            window.location.reload();
+        }
+
+        // Run tests
+        testDataStructure();
+
+        // Test 3: Check if we can access main app functionality
+        setTimeout(() => {
+            if (window.BabyWordsTracker) {
+                document.getElementById('render-test').innerHTML = '✅ BabyWordsTracker class available';
+                document.getElementById('render-test').className = 'pass';
+            } else {
+                document.getElementById('render-test').innerHTML = '❌ BabyWordsTracker class not found';
+                document.getElementById('render-test').className = 'fail';
+            }
+        }, 100);
+    </script>
+
+    <!-- Include the main script -->
+    <script src="script.js?v=2.0"></script>
+</body>
+</html>

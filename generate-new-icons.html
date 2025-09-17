@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate App Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .progress { margin: 10px 0; }
+        .icon-preview { margin: 10px; display: inline-block; text-align: center; }
+        .icon-preview img { border: 1px solid #ccc; }
+        .icon-preview div { font-size: 12px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Generate App Icons</h1>
+    <input type="file" id="sourceImage" accept="image/*">
+    <button onclick="generateIcons()">Generate All Icon Sizes</button>
+
+    <div id="progress"></div>
+    <div id="preview"></div>
+
+    <script>
+        const iconSizes = [
+            { size: 72, filename: 'icon-72x72.png' },
+            { size: 96, filename: 'icon-96x96.png' },
+            { size: 128, filename: 'icon-128x128.png' },
+            { size: 144, filename: 'icon-144x144.png' },
+            { size: 152, filename: 'icon-152x152.png' },
+            { size: 192, filename: 'icon-192x192.png' },
+            { size: 384, filename: 'icon-384x384.png' },
+            { size: 512, filename: 'icon-512x512.png' }
+        ];
+
+        function generateIcons() {
+            const fileInput = document.getElementById('sourceImage');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select an image file first');
+                return;
+            }
+
+            const progressDiv = document.getElementById('progress');
+            const previewDiv = document.getElementById('preview');
+
+            progressDiv.innerHTML = 'Loading image...';
+            previewDiv.innerHTML = '';
+
+            const img = new Image();
+            img.onload = function() {
+                progressDiv.innerHTML = 'Generating icons...';
+
+                iconSizes.forEach((iconConfig, index) => {
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        canvas.width = iconConfig.size;
+                        canvas.height = iconConfig.size;
+
+                        // Draw the image scaled to the canvas size
+                        ctx.drawImage(img, 0, 0, iconConfig.size, iconConfig.size);
+
+                        // Convert to blob and create download link
+                        canvas.toBlob((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = iconConfig.filename;
+                            a.click();
+
+                            // Create preview
+                            const preview = document.createElement('div');
+                            preview.className = 'icon-preview';
+
+                            const previewImg = document.createElement('img');
+                            previewImg.src = url;
+                            previewImg.width = Math.min(iconConfig.size, 100);
+                            previewImg.height = Math.min(iconConfig.size, 100);
+
+                            const label = document.createElement('div');
+                            label.textContent = `${iconConfig.size}x${iconConfig.size}`;
+
+                            preview.appendChild(previewImg);
+                            preview.appendChild(label);
+                            previewDiv.appendChild(preview);
+
+                            URL.revokeObjectURL(url);
+                        }, 'image/png');
+
+                        progressDiv.innerHTML = `Generated ${index + 1}/${iconSizes.length} icons`;
+
+                        if (index === iconSizes.length - 1) {
+                            setTimeout(() => {
+                                progressDiv.innerHTML = 'All icons generated! Check your Downloads folder.';
+                            }, 500);
+                        }
+                    }, index * 200);
+                });
+            };
+
+            img.src = URL.createObjectURL(file);
+        }
+    </script>
+</body>
+</html>
