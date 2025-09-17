@@ -21,7 +21,8 @@
       "Bash(git pull:*)",
       "Bash(git checkout:*)",
       "Bash(copy:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(start \"C:\\Users\\goerg\\OneDrive\\Documents\\ClaudeCodeTest\\toddler-words-app\\generate-professional-icons.html\")"
     ],
     "deny": [],
     "ask": []
