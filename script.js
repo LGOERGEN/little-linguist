@@ -1203,35 +1203,37 @@ class BabyWordsTracker {
         const totalSpeaking = parseInt(document.getElementById('total-speaking').textContent) || 0;
         const milestoneIndicator = document.getElementById('milestone-indicator');
         const milestoneText = milestoneIndicator.querySelector('.milestone-text');
+        const childName = document.getElementById('child-name').value.trim();
+        const nameText = childName ? `${childName} is ` : 'Your baby is ';
 
         let message = '';
 
         if (age >= 12 && age < 18) {
             if (totalSpeaking >= 3) {
-                message = "Fantastic! Your baby is saying first words! 🌟";
+                message = `Fantastic! ${nameText}saying first words! 🌟`;
             } else {
-                message = "First words are coming soon! Keep talking! 💬";
+                message = `${nameText.replace('is ', '')}first words are coming soon! Keep talking! 💬`;
             }
         } else if (age >= 18 && age < 24) {
             if (totalSpeaking >= 10) {
-                message = "Amazing vocabulary development! 🚀";
+                message = `Amazing! ${nameText}developing an incredible vocabulary! 🚀`;
             } else {
-                message = "Great progress! Words are building up! 📈";
+                message = `Great progress! ${nameText}building up words! 📈`;
             }
         } else if (age >= 24 && age < 36) {
             if (totalSpeaking >= 50) {
-                message = "Incredible! Your toddler is very expressive! 🎉";
+                message = `Incredible! ${nameText}very expressive! 🎉`;
             } else {
-                message = "Wonderful language growth! Keep it up! 💪";
+                message = `Wonderful! ${nameText}showing great language growth! 💪`;
             }
         } else if (age >= 36) {
             if (totalSpeaking >= 100) {
-                message = "Outstanding vocabulary! Future linguist! 🌍";
+                message = `Outstanding! ${nameText}a future linguist! 🌍`;
             } else {
-                message = "Excellent language development! 📚";
+                message = `Excellent! ${nameText}developing language beautifully! 📚`;
             }
         } else {
-            message = "Every sound and babble counts! 🤗";
+            message = `Every sound and babble from ${childName || 'your baby'} counts! 🤗`;
         }
 
         milestoneText.textContent = message;

@@ -1,6 +1,6 @@
 // Service Worker for Baby Words Tracker PWA
 
-const CACHE_NAME = 'baby-words-v1';
+const CACHE_NAME = 'baby-words-v2';
 const urlsToCache = [
     '/',
     '/index.html',
