@@ -715,10 +715,17 @@ class BabyWordsTracker {
             checkbox.addEventListener('change', () => this.updateSelectedLanguages());
         });
 
-        // Add child button
+        // Add child button - add both click and touchend for mobile
         const addChildBtn = document.getElementById('add-child-btn');
         if (addChildBtn) {
-            addChildBtn.addEventListener('click', () => this.addNewChild());
+            addChildBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addNewChild();
+            });
+            addChildBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.addNewChild();
+            });
         }
 
         // Child edit close button
@@ -868,17 +875,29 @@ class BabyWordsTracker {
 
 
     addNewChild() {
-        const name = prompt('Enter the child\'s name:', 'New Child');
-        if (name && name.trim()) {
-            const childId = this.createNewChild(name.trim(), null, ['english', 'portuguese'], true);
-            this.renderChildProfiles();
-            this.renderCategories();
-            this.updateStatistics();
-            this.checkMilestones();
+        // For mobile compatibility, use a more reliable approach than prompt()
+        let name = null;
 
-            // Open edit section for new child setup
-            this.editChild(childId);
+        // Try prompt first, but handle mobile issues
+        try {
+            name = prompt('Enter the child\'s name:', 'New Child');
+        } catch (error) {
+            console.log('Prompt failed, using fallback');
         }
+
+        // If prompt failed or was cancelled, create with default name and let user edit
+        if (!name || !name.trim()) {
+            name = 'New Child';
+        }
+
+        const childId = this.createNewChild(name.trim(), null, ['english', 'portuguese'], true);
+        this.renderChildProfiles();
+        this.renderCategories();
+        this.updateStatistics();
+        this.checkMilestones();
+
+        // Open edit section for new child setup (especially important on mobile)
+        this.editChild(childId);
     }
 
     handleSearch(term) {

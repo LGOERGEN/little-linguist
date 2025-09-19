@@ -103,6 +103,14 @@ body {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
+/* Mobile responsive icon size */
+@media (max-width: 767px) {
+    .cub-logo {
+        width: 50px;
+        height: 50px;
+    }
+}
+
 .header-title {
     font-family: 'Dancing Script', cursive;
     font-size: 2.5rem;
@@ -514,6 +522,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Mobile touch improvements */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
 }
 
 .add-child-btn:hover {
