@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Better App Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .icon-preview { display: inline-block; margin: 10px; text-align: center; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Generate Better App Icons - Linguist Cub</h1>
+    <p>This will create icons with a larger bear that fills more space and has a background color.</p>
+
+    <div>
+        <label>Background Color: </label>
+        <input type="color" id="bgColor" value="#6c9bd1">
+        <label>Bear Size: </label>
+        <input type="range" id="bearSize" min="0.5" max="0.9" step="0.1" value="0.8">
+        <span id="sizeValue">80%</span>
+    </div>
+
+    <button onclick="generateIcons()">Generate All Icons</button>
+    <button onclick="downloadAll()">Download All</button>
+
+    <div id="iconContainer"></div>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        let canvases = [];
+
+        document.getElementById('bearSize').addEventListener('input', function() {
+            document.getElementById('sizeValue').textContent = Math.round(this.value * 100) + '%';
+        });
+
+        function drawBearIcon(canvas, size, bgColor, bearScale) {
+            const ctx = canvas.getContext('2d');
+            const center = size / 2;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            // Scale everything based on size and bearScale
+            const scale = (size / 192) * bearScale;
+
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.scale(scale, scale);
+
+            // Bear head (larger circle)
+            ctx.fillStyle = '#e8f4f8';
+            ctx.beginPath();
+            ctx.arc(0, 0, 80, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Bear ears
+            ctx.fillStyle = '#e8f4f8';
+            ctx.beginPath();
+            ctx.arc(-45, -45, 25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(45, -45, 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Inner ears
+            ctx.fillStyle = '#d1e7dd';
+            ctx.beginPath();
+            ctx.arc(-45, -45, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(45, -45, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eyes
+            ctx.fillStyle = '#2c3e50';
+            ctx.beginPath();
+            ctx.arc(-25, -15, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(25, -15, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Nose
+            ctx.fillStyle = '#34495e';
+            ctx.beginPath();
+            ctx.arc(0, 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mouth
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, 15, 15, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+
+            // Letter "L" in a circle (for Linguist)
+            ctx.fillStyle = bgColor;
+            ctx.beginPath();
+            ctx.arc(0, 35, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('L', 0, 35);
+
+            ctx.restore();
+        }
+
+        function generateIcons() {
+            const container = document.getElementById('iconContainer');
+            container.innerHTML = '';
+            canvases = [];
+
+            const bgColor = document.getElementById('bgColor').value;
+            const bearScale = parseFloat(document.getElementById('bearSize').value);
+
+            sizes.forEach(size => {
+                const preview = document.createElement('div');
+                preview.className = 'icon-preview';
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                canvas.style.width = '100px';
+                canvas.style.height = '100px';
+
+                drawBearIcon(canvas, size, bgColor, bearScale);
+
+                const label = document.createElement('div');
+                label.textContent = `${size}x${size}`;
+
+                preview.appendChild(canvas);
+                preview.appendChild(label);
+                container.appendChild(preview);
+
+                canvases.push({canvas, size});
+            });
+        }
+
+        function downloadAll() {
+            canvases.forEach(({canvas, size}) => {
+                const link = document.createElement('a');
+                link.download = `icon-${size}x${size}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        // Generate initial icons
+        generateIcons();
+    </script>
+</body>
+</html>
