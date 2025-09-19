@@ -179,12 +179,12 @@
                         // Clear to transparent
                         ctx.clearRect(0, 0, iconConfig.size, iconConfig.size);
 
-                        // Calculate scaling to account for iOS rounded corners
-                        // iOS applies ~22.5% radius, so we need to ensure content doesn't get cut
-                        const cornerCompensation = iconConfig.size * 0.10; // 10% compensation for rounded corners
-                        const drawSize = iconConfig.size - (cornerCompensation * 2);
-                        const drawX = cornerCompensation;
-                        const drawY = cornerCompensation;
+                        // Scale image larger than canvas to fill rounded corners
+                        // When OS applies rounded corners, the scaled image will still fill visible area
+                        const scale = 1.15; // 15% larger to compensate for rounded corner cropping
+                        const drawSize = iconConfig.size * scale;
+                        const drawX = (iconConfig.size - drawSize) / 2; // Center the oversized image
+                        const drawY = (iconConfig.size - drawSize) / 2;
 
                         // Draw with perfect scaling
                         ctx.drawImage(img, drawX, drawY, drawSize, drawSize);
