@@ -246,6 +246,11 @@ class BabyWordsTracker {
                         { word: 'car', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'playground', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
+                },
+                other: {
+                    title: 'Other',
+                    language: 'english',
+                    words: []
                 }
             },
             portuguese: {
@@ -464,6 +469,11 @@ class BabyWordsTracker {
                         { word: 'carro', understanding: false, speaking: false, firstSpokenAge: null },
                         { word: 'playground', understanding: false, speaking: false, firstSpokenAge: null }
                     ]
+                },
+                other: {
+                    title: 'Outros',
+                    language: 'portuguese',
+                    words: []
                 }
             }
         };
@@ -715,10 +725,17 @@ class BabyWordsTracker {
             checkbox.addEventListener('change', () => this.updateSelectedLanguages());
         });
 
-        // Add child button
+        // Add child button - add both click and touchend for mobile
         const addChildBtn = document.getElementById('add-child-btn');
         if (addChildBtn) {
-            addChildBtn.addEventListener('click', () => this.addNewChild());
+            addChildBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addNewChild();
+            });
+            addChildBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.addNewChild();
+            });
         }
 
         // Child edit close button
@@ -741,6 +758,14 @@ class BabyWordsTracker {
 
         searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
         searchClear.addEventListener('click', () => this.clearSearch());
+
+        // Hide search dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const searchContainer = document.querySelector('.search-container');
+            if (searchContainer && !searchContainer.contains(e.target)) {
+                this.hideSearchSuggestions();
+            }
+        });
 
         // Filter buttons
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -828,6 +853,18 @@ class BabyWordsTracker {
         const birth = new Date(birthDate);
         const today = new Date();
 
+        console.log('🔍 Age calculation debug:', {
+            birthDate,
+            birth: birth.toISOString(),
+            today: today.toISOString(),
+            birthYear: birth.getFullYear(),
+            todayYear: today.getFullYear(),
+            birthMonth: birth.getMonth(),
+            todayMonth: today.getMonth(),
+            birthDay: birth.getDate(),
+            todayDay: today.getDate()
+        });
+
         let months = (today.getFullYear() - birth.getFullYear()) * 12;
         months -= birth.getMonth();
         months += today.getMonth();
@@ -836,6 +873,7 @@ class BabyWordsTracker {
             months--;
         }
 
+        console.log('🔍 Calculated age in months:', months);
         return Math.max(0, months);
     }
 
@@ -868,17 +906,17 @@ class BabyWordsTracker {
 
 
     addNewChild() {
-        const name = prompt('Enter the child\'s name:', 'New Child');
-        if (name && name.trim()) {
-            const childId = this.createNewChild(name.trim(), null, ['english', 'portuguese'], true);
-            this.renderChildProfiles();
-            this.renderCategories();
-            this.updateStatistics();
-            this.checkMilestones();
+        // Create new child with default name and immediately open edit area
+        const name = 'New Child';
 
-            // Open edit section for new child setup
-            this.editChild(childId);
-        }
+        const childId = this.createNewChild(name, null, ['english', 'portuguese'], true);
+        this.renderChildProfiles();
+        this.renderCategories();
+        this.updateStatistics();
+        this.checkMilestones();
+
+        // Open edit section immediately for user to set name, birth date, etc.
+        this.editChild(childId);
     }
 
     handleSearch(term) {
@@ -887,6 +925,13 @@ class BabyWordsTracker {
 
         const clearBtn = document.getElementById('search-clear');
         clearBtn.style.display = term ? 'flex' : 'none';
+
+        // Show search suggestions
+        if (term.length > 0) {
+            this.showSearchSuggestions(term);
+        } else {
+            this.hideSearchSuggestions();
+        }
     }
 
     clearSearch() {
@@ -895,6 +940,304 @@ class BabyWordsTracker {
         this.searchTerm = '';
         this.filterWords();
         document.getElementById('search-clear').style.display = 'none';
+        this.hideSearchSuggestions();
+    }
+
+    showSearchSuggestions(term) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        // Get all words from both languages
+        const allWords = [];
+        ['english', 'portuguese'].forEach(language => {
+            if (activeChild.categories[language]) {
+                Object.keys(activeChild.categories[language]).forEach(categoryKey => {
+                    const category = activeChild.categories[language][categoryKey];
+                    category.words.forEach((word, index) => {
+                        allWords.push({
+                            word: word.word,
+                            language,
+                            categoryKey,
+                            index,
+                            speaking: word.speaking,
+                            understanding: word.understanding
+                        });
+                    });
+                });
+            }
+        });
+
+        // Filter words that match search term
+        const matchingWords = allWords.filter(item =>
+            item.word.toLowerCase().includes(term.toLowerCase())
+        ).slice(0, 6); // Limit to 6 suggestions
+
+        // Check if search term exactly matches any word
+        const exactMatch = allWords.find(item =>
+            item.word.toLowerCase() === term.toLowerCase()
+        );
+
+        this.renderSearchDropdown(matchingWords, term, !exactMatch);
+    }
+
+    hideSearchSuggestions() {
+        const dropdown = document.getElementById('search-dropdown');
+        if (dropdown) {
+            dropdown.style.display = 'none';
+        }
+    }
+
+    renderSearchDropdown(suggestions, searchTerm, showAddOption) {
+        let dropdown = document.getElementById('search-dropdown');
+        if (!dropdown) {
+            dropdown = this.createSearchDropdown();
+        }
+
+        let html = '';
+
+        // Add matching words
+        suggestions.forEach(item => {
+            const languageFlag = item.language === 'english' ? '🇬🇧' : '🇧🇷';
+            const statusIcons = [];
+            if (item.understanding) statusIcons.push('👂');
+            if (item.speaking) statusIcons.push('💬');
+
+            html += `
+                <div class="search-suggestion-item" data-word="${item.word}">
+                    <div class="suggestion-word">${item.word}</div>
+                    <div class="suggestion-meta">
+                        <span class="suggestion-language">${languageFlag}</span>
+                        <span class="suggestion-status">${statusIcons.join(' ')}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Add "Add new word" option if no exact match
+        if (showAddOption && searchTerm.trim()) {
+            html += `
+                <div class="search-suggestion-item add-word-option" data-action="add-word" data-word="${searchTerm}">
+                    <div class="suggestion-word">
+                        <span class="add-icon">➕</span> Add "${searchTerm}"
+                    </div>
+                    <div class="suggestion-meta">New word</div>
+                </div>
+            `;
+        }
+
+        dropdown.innerHTML = html;
+        dropdown.style.display = html ? 'block' : 'none';
+
+        // Add click handlers
+        dropdown.querySelectorAll('.search-suggestion-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (item.dataset.action === 'add-word') {
+                    this.handleAddWordFromSearch(item.dataset.word);
+                } else {
+                    this.handleWordSuggestionClick(item.dataset.word);
+                }
+            });
+        });
+    }
+
+    createSearchDropdown() {
+        const searchContainer = document.querySelector('.search-container');
+        const dropdown = document.createElement('div');
+        dropdown.id = 'search-dropdown';
+        dropdown.className = 'search-dropdown';
+        searchContainer.appendChild(dropdown);
+        return dropdown;
+    }
+
+    handleWordSuggestionClick(word) {
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = word;
+        this.handleSearch(word);
+        this.hideSearchSuggestions();
+    }
+
+    handleAddWordFromSearch(word) {
+        this.hideSearchSuggestions();
+
+        // Show language selection for the new word
+        this.showLanguageSelectionForNewWord(word);
+    }
+
+    showLanguageSelectionForNewWord(word) {
+        // Create a simple language selection overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'language-selection-overlay';
+        overlay.innerHTML = `
+            <div class="language-selection-modal">
+                <h3>Add "${word}" to which language?</h3>
+                <div class="language-options">
+                    <button class="language-option-btn english" data-language="english">
+                        🇬🇧 English
+                    </button>
+                    <button class="language-option-btn portuguese" data-language="portuguese">
+                        🇧🇷 Portuguese
+                    </button>
+                </div>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Add event listeners
+        overlay.querySelectorAll('.language-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const language = btn.dataset.language;
+                document.body.removeChild(overlay);
+                this.showCategorySelectionForNewWord(word, language);
+            });
+        });
+
+        overlay.querySelector('.cancel-btn').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                document.body.removeChild(overlay);
+            }
+        });
+    }
+
+    showCategorySelectionForNewWord(word, language) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const categories = activeChild.categories[language];
+        if (!categories || Object.keys(categories).length === 0) {
+            alert(`No ${language} categories available. Please add categories first.`);
+            return;
+        }
+
+        // Create category selection overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'language-selection-overlay';
+
+        let categoryOptionsHTML = '';
+        Object.keys(categories).forEach(categoryKey => {
+            const category = categories[categoryKey];
+            categoryOptionsHTML += `
+                <button class="category-option-btn" data-category="${categoryKey}">
+                    ${category.title}
+                </button>
+            `;
+        });
+
+        overlay.innerHTML = `
+            <div class="category-selection-modal">
+                <h3>Add "${word}" to which category?</h3>
+                <div class="category-selection-section">
+                    <div class="category-options">
+                        ${categoryOptionsHTML}
+                    </div>
+                </div>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Add event listeners for existing categories
+        overlay.querySelectorAll('.category-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const categoryKey = btn.dataset.category;
+                this.addWordToCategory(word, language, categoryKey);
+                document.body.removeChild(overlay);
+            });
+        });
+
+        overlay.querySelector('.cancel-btn').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                document.body.removeChild(overlay);
+            }
+        });
+    }
+
+    addWordToCategory(word, language, categoryKey) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const categories = activeChild.categories[language];
+        if (!categories || !categories[categoryKey]) {
+            alert(`Category not found.`);
+            return;
+        }
+
+        const category = categories[categoryKey];
+
+        // Check if word already exists in this category
+        const existingWord = category.words.find(w => w.word.toLowerCase() === word.toLowerCase());
+        if (existingWord) {
+            alert(`"${word}" already exists in ${category.title}`);
+            return;
+        }
+
+        // Add the new word
+        const newWord = {
+            word: word,
+            understanding: false,
+            speaking: false,
+            age: null
+        };
+
+        category.words.push(newWord);
+        const wordIndex = category.words.length - 1;
+
+        // Save data
+        this.saveData();
+
+        // Re-render the language sections to show the new word
+        this.renderCategories();
+
+        // Clear search and show success
+        this.clearSearch();
+        this.showToast(`Added "${word}" to ${category.title}!`);
+
+        // Optionally scroll to the new word and switch to that category tab
+        setTimeout(() => {
+            // Switch to the category tab where the word was added
+            this.switchCategoryTab(language, categoryKey);
+
+            // Scroll to the new word
+            const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"][data-word-id="${wordIndex}"]`);
+            if (wordElement) {
+                wordElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                wordElement.style.animation = 'highlight-new-word 2s ease-out';
+            }
+        }, 100);
+    }
+
+    createCustomCategoryAndAddWord(word, language, categoryName) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        // Create a category key from the name (lowercase, replace spaces with hyphens)
+        const categoryKey = categoryName.toLowerCase().replace(/\s+/g, '-');
+
+        // Check if category already exists
+        if (activeChild.categories[language][categoryKey]) {
+            alert(`Category "${categoryName}" already exists. Adding word to existing category.`);
+            this.addWordToCategory(word, language, categoryKey);
+            return;
+        }
+
+        // Create new category
+        activeChild.categories[language][categoryKey] = {
+            title: categoryName,
+            words: []
+        };
+
+        // Add the word to the new category
+        this.addWordToCategory(word, language, categoryKey);
     }
 
     handleFilter(filter) {
@@ -910,41 +1253,52 @@ class BabyWordsTracker {
     }
 
     filterWords() {
-        const categories = document.querySelectorAll('.category-card');
+        const languageSections = document.querySelectorAll('.language-section');
 
-        categories.forEach(categoryCard => {
-            const language = categoryCard.dataset.language;
-            const categoryKey = categoryCard.dataset.category;
-            const wordContainers = categoryCard.querySelectorAll('.word-item-container');
+        languageSections.forEach(languageSection => {
+            const language = languageSection.dataset.language;
+            const wordsContainers = languageSection.querySelectorAll('.words-container');
             let hasVisibleWords = false;
 
-            wordContainers.forEach(wordContainer => {
-                const wordId = wordContainer.dataset.wordId;
-                const word = this.data.categories[language][categoryKey].words[parseInt(wordId)];
+            wordsContainers.forEach(wordsContainer => {
+                const wordContainers = wordsContainer.querySelectorAll('.word-item-container');
 
-                let matchesSearch = true;
-                let matchesFilter = true;
+                wordContainers.forEach(wordContainer => {
+                    const wordId = wordContainer.dataset.wordId;
+                    const categoryKey = wordContainer.dataset.category;
 
-                // Search filter
-                if (this.searchTerm) {
-                    matchesSearch = word.word.toLowerCase().includes(this.searchTerm);
-                }
+                    const activeChild = this.getActiveChild();
+                    if (!activeChild) return;
 
-                // Comprehension filter
-                if (this.currentFilter === 'speaking') {
-                    matchesFilter = word.speaking;
-                } else if (this.currentFilter === 'understanding') {
-                    matchesFilter = word.understanding || word.speaking;
-                }
+                    const word = activeChild.categories[language][categoryKey].words[parseInt(wordId)];
 
-                const shouldShow = matchesSearch && matchesFilter;
-                wordContainer.classList.toggle('hidden', !shouldShow);
+                    let matchesSearch = true;
+                    let matchesFilter = true;
 
-                if (shouldShow) hasVisibleWords = true;
+                    // Search filter
+                    if (this.searchTerm) {
+                        matchesSearch = word.word.toLowerCase().includes(this.searchTerm);
+                    }
+
+                    // Comprehension filter
+                    if (this.currentFilter === 'speaking') {
+                        matchesFilter = word.speaking;
+                    } else if (this.currentFilter === 'understanding') {
+                        matchesFilter = word.understanding || word.speaking;
+                    }
+
+                    const shouldShow = matchesSearch && matchesFilter;
+                    wordContainer.classList.toggle('hidden', !shouldShow);
+
+                    if (shouldShow) hasVisibleWords = true;
+                });
             });
 
-            // Hide category if no words are visible
-            categoryCard.classList.toggle('hidden', !hasVisibleWords);
+            // Only hide language section if no words are visible and not collapsed
+            const isExpanded = languageSection.querySelector('.language-content').classList.contains('expanded');
+            if (isExpanded) {
+                languageSection.style.display = hasVisibleWords ? 'block' : 'none';
+            }
         });
     }
 
@@ -965,15 +1319,12 @@ class BabyWordsTracker {
         // Get selected languages, default to both if none selected
         const selectedLanguages = activeChild.selectedLanguages || ['english', 'portuguese'];
 
-        // Render categories for selected languages only
+        // Render consolidated language sections (auto-expanded)
         selectedLanguages.forEach(language => {
             if (activeChild.categories[language]) {
-                console.log(`Rendering ${language} categories:`, Object.keys(activeChild.categories[language]));
-                Object.keys(activeChild.categories[language]).forEach(categoryKey => {
-                    const category = activeChild.categories[language][categoryKey];
-                    const categoryCard = this.createCategoryCard(language, categoryKey, category);
-                    container.appendChild(categoryCard);
-                });
+                console.log(`Rendering ${language} consolidated section:`, Object.keys(activeChild.categories[language]));
+                const languageSection = this.createConsolidatedLanguageSection(language, activeChild.categories[language]);
+                container.appendChild(languageSection);
             } else {
                 console.log(`No ${language} categories found for child`);
             }
@@ -1037,6 +1388,149 @@ class BabyWordsTracker {
         return card;
     }
 
+    createConsolidatedLanguageSection(language, categories) {
+        const section = document.createElement('div');
+        section.className = `language-section ${language}-section`;
+        section.dataset.language = language;
+
+        // Create language header with toggle
+        const header = document.createElement('div');
+        header.className = 'language-header';
+        header.onclick = () => this.toggleLanguageSection(language);
+
+        const title = document.createElement('h2');
+        title.className = 'language-title';
+        const languageFlag = language === 'english' ? '🇬🇧' : '🇧🇷';
+        const languageName = language === 'english' ? 'English' : 'Portuguese';
+        title.textContent = `${languageFlag} ${languageName}`;
+
+        const toggle = document.createElement('div');
+        toggle.className = 'language-toggle';
+        toggle.innerHTML = '▼';
+
+        header.appendChild(title);
+        header.appendChild(toggle);
+
+        // Create category tabs
+        const categoryTabs = this.createCategoryTabs(language, categories);
+
+        // Create words container (expandable)
+        const content = document.createElement('div');
+        content.className = 'language-content expanded';
+        content.id = `language-content-${language}`;
+
+        // Create words container that will be filtered by category tabs
+        const wordsContainer = document.createElement('div');
+        wordsContainer.className = 'words-container';
+        wordsContainer.id = `words-container-${language}`;
+
+        // Initially show all words from all categories
+        this.renderWordsForLanguage(language, categories, wordsContainer);
+
+        content.appendChild(categoryTabs);
+        content.appendChild(wordsContainer);
+        section.appendChild(header);
+        section.appendChild(content);
+
+        // Set default active category (first one or "all")
+        section.dataset.activeCategory = 'all';
+
+        return section;
+    }
+
+    createCategoryTabs(language, categories) {
+        const tabsContainer = document.createElement('div');
+        tabsContainer.className = 'category-tabs';
+
+        // Add "All" tab
+        const allTab = document.createElement('button');
+        allTab.className = 'category-tab active';
+        allTab.dataset.category = 'all';
+        allTab.dataset.language = language;
+        allTab.textContent = 'All';
+        allTab.onclick = () => this.switchCategoryTab(language, 'all');
+
+        tabsContainer.appendChild(allTab);
+
+        // Add tabs for each category
+        Object.keys(categories).forEach(categoryKey => {
+            const category = categories[categoryKey];
+            const tab = document.createElement('button');
+            tab.className = 'category-tab';
+            tab.dataset.category = categoryKey;
+            tab.dataset.language = language;
+            tab.textContent = category.title;
+            tab.onclick = () => this.switchCategoryTab(language, categoryKey);
+
+            tabsContainer.appendChild(tab);
+        });
+
+        return tabsContainer;
+    }
+
+    renderWordsForLanguage(language, categories, container, filterCategory = null) {
+        const wordsList = document.createElement('div');
+        wordsList.className = 'words-list';
+
+        Object.keys(categories).forEach(categoryKey => {
+            // Skip if filtering by category and this isn't the one
+            if (filterCategory && filterCategory !== 'all' && filterCategory !== categoryKey) {
+                return;
+            }
+
+            const category = categories[categoryKey];
+            category.words.forEach((word, wordIndex) => {
+                const wordItem = this.createWordItem(language, categoryKey, word, wordIndex);
+                wordsList.appendChild(wordItem);
+            });
+        });
+
+        container.innerHTML = '';
+        container.appendChild(wordsList);
+    }
+
+    switchCategoryTab(language, categoryKey) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const categories = activeChild.categories[language];
+        if (!categories) return;
+
+        // Update active tab styling
+        const languageSection = document.querySelector(`.language-section[data-language="${language}"]`);
+        const tabs = languageSection.querySelectorAll('.category-tab');
+        tabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.category === categoryKey);
+        });
+
+        // Update words display
+        const wordsContainer = document.getElementById(`words-container-${language}`);
+        this.renderWordsForLanguage(language, categories, wordsContainer, categoryKey);
+
+        // Update section's active category
+        languageSection.dataset.activeCategory = categoryKey;
+
+        // Re-apply current filters
+        this.filterWords();
+    }
+
+    toggleLanguageSection(language) {
+        const content = document.getElementById(`language-content-${language}`);
+        const toggle = document.querySelector(`.language-section[data-language="${language}"] .language-toggle`);
+
+        const isExpanded = content.classList.contains('expanded');
+
+        if (isExpanded) {
+            content.classList.remove('expanded');
+            content.style.maxHeight = '0';
+            toggle.innerHTML = '▶';
+        } else {
+            content.classList.add('expanded');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            toggle.innerHTML = '▼';
+        }
+    }
+
     createWordItem(language, categoryKey, word, wordIndex) {
         const container = document.createElement('div');
         container.className = `word-item-container ${language}-word`;
@@ -1067,8 +1561,19 @@ class BabyWordsTracker {
             () => this.toggleWordSpeaking(language, categoryKey, wordIndex)
         );
 
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'word-delete-btn';
+        deleteButton.title = 'Delete word';
+        deleteButton.innerHTML = '×';
+        deleteButton.onclick = (e) => {
+            e.stopPropagation();
+            this.confirmDeleteWord(language, categoryKey, wordIndex, word.word);
+        };
+
         controls.appendChild(understandingToggle);
         controls.appendChild(speakingToggle);
+        controls.appendChild(deleteButton);
 
         // Create age selector (only show when speaking is true)
         const ageSelector = this.createAgeSelector(language, categoryKey, wordIndex, word);
@@ -1195,6 +1700,7 @@ class BabyWordsTracker {
     }
 
     toggleWordUnderstanding(language, categoryKey, wordIndex) {
+        console.log('toggleWordUnderstanding called:', { language, categoryKey, wordIndex });
         const activeChild = this.getActiveChild();
         if (!activeChild) return;
 
@@ -1214,6 +1720,7 @@ class BabyWordsTracker {
     }
 
     toggleWordSpeaking(language, categoryKey, wordIndex) {
+        console.log('toggleWordSpeaking called:', { language, categoryKey, wordIndex });
         const activeChild = this.getActiveChild();
         if (!activeChild) return;
 
@@ -1226,10 +1733,12 @@ class BabyWordsTracker {
             // Set default age to current calculated age
             if (activeChild.birthDate) {
                 const ageInMonths = this.calculateAgeInMonths(activeChild.birthDate);
+                console.log('🔍 Setting firstSpokenAge for word:', word.word, 'to age:', ageInMonths, 'months');
                 word.firstSpokenAge = ageInMonths;
             } else {
                 // If no birth date set, use a default reasonable age and prompt user to set birth date
                 word.firstSpokenAge = 12;
+                console.log('🔍 No birth date, setting firstSpokenAge to default 12 months');
             }
         } else {
             // Turning speaking OFF
@@ -1300,7 +1809,9 @@ class BabyWordsTracker {
         if (!activeChild) return;
 
         const word = activeChild.categories[language][categoryKey].words[wordIndex];
-        const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"] [data-word-id="${wordIndex}"]`);
+        const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"][data-word-id="${wordIndex}"]`);
+
+        console.log('updateWordDisplay called:', { language, categoryKey, wordIndex, word, wordElement });
 
         if (wordElement) {
             // Update understanding toggle
@@ -1921,6 +2432,9 @@ class BabyWordsTracker {
             // Re-initialize the form with current child data
             this.initializeChildProfile();
 
+            // Add click-outside-to-close functionality
+            this.addChildEditClickOutside();
+
             // Focus on the name input
             setTimeout(() => {
                 const nameInput = document.getElementById('child-name');
@@ -1936,7 +2450,74 @@ class BabyWordsTracker {
         const editSection = document.getElementById('child-edit-section');
         if (editSection) {
             editSection.style.display = 'none';
+            // Remove click-outside event listener
+            this.removeChildEditClickOutside();
         }
+    }
+
+    addChildEditClickOutside() {
+        // Remove any existing listener first
+        this.removeChildEditClickOutside();
+
+        this.childEditClickOutsideHandler = (event) => {
+            const editSection = document.getElementById('child-edit-section');
+            const editContent = editSection?.querySelector('.child-edit-content');
+
+            if (editSection && editSection.style.display === 'block') {
+                // Check if click is outside the edit content area
+                if (editContent && !editContent.contains(event.target)) {
+                    this.closeChildEdit();
+                }
+            }
+        };
+
+        document.addEventListener('click', this.childEditClickOutsideHandler);
+    }
+
+    removeChildEditClickOutside() {
+        if (this.childEditClickOutsideHandler) {
+            document.removeEventListener('click', this.childEditClickOutsideHandler);
+            this.childEditClickOutsideHandler = null;
+        }
+    }
+
+    confirmDeleteWord(language, categoryKey, wordIndex, wordText) {
+        if (confirm(`Are you sure you want to delete the word "${wordText}"?`)) {
+            this.deleteWord(language, categoryKey, wordIndex);
+        }
+    }
+
+    deleteWord(language, categoryKey, wordIndex) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const category = activeChild.categories[language][categoryKey];
+        if (!category || !category.words || wordIndex < 0 || wordIndex >= category.words.length) {
+            console.error('Invalid word deletion parameters:', { language, categoryKey, wordIndex });
+            return;
+        }
+
+        // Find and remove the word card from DOM immediately
+        const wordCard = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"][data-word-id="${wordIndex}"]`);
+        if (wordCard) {
+            wordCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            wordCard.style.opacity = '0';
+            wordCard.style.transform = 'scale(0.8)';
+
+            setTimeout(() => {
+                if (wordCard.parentNode) {
+                    wordCard.parentNode.removeChild(wordCard);
+                }
+            }, 300);
+        }
+
+        // Remove the word from the array
+        category.words.splice(wordIndex, 1);
+
+        // Save data and update display (but skip re-rendering since we already removed the card)
+        this.saveData();
+        this.updateStatistics();
+        this.generateTimelineChart();
     }
 
     confirmDeleteChild(childId) {

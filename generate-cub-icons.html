@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Linguist Cub Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #a8c4e8 0%, #7ba7d9 50%, #8db4e3 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        .progress {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(123, 167, 217, 0.1);
+            border-left: 4px solid #7ba7d9;
+            border-radius: 8px;
+        }
+        .icon-preview {
+            margin: 15px;
+            display: inline-block;
+            text-align: center;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .icon-preview img {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .icon-preview div {
+            font-size: 13px;
+            margin-top: 10px;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        .upload-area {
+            border: 3px dashed #7ba7d9;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            margin: 20px 0;
+            background: rgba(123, 167, 217, 0.05);
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: rgba(123, 167, 217, 0.1);
+            border-color: #5a8bc7;
+        }
+        .btn {
+            background: linear-gradient(135deg, #7ba7d9, #8db4e3);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(123, 167, 217, 0.4);
+        }
+        .info {
+            background: rgba(244, 162, 97, 0.1);
+            border: 2px solid #f4a261;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .info ul {
+            color: #6c757d;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐻 Linguist Cub Icon Generator</h1>
+            <div class="subtitle">Create professional app icons for your language tracking app</div>
+        </div>
+
+        <div class="info">
+            <h3>✨ Professional PWA Icons</h3>
+            <ul>
+                <li>High-quality transparent backgrounds</li>
+                <li>Perfect for iOS and Android home screens</li>
+                <li>All PWA required sizes (72px to 512px)</li>
+                <li>Optimized bear cub design scaling</li>
+                <li>Ready for app store submission</li>
+            </ul>
+        </div>
+
+        <div class="upload-area">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🐻</div>
+            <input type="file" id="sourceImage" accept="image/*" style="margin-bottom: 20px; padding: 10px;">
+            <br>
+            <button class="btn" onclick="generateIcons()">🚀 Generate Linguist Cub Icons</button>
+        </div>
+
+        <div id="progress"></div>
+        <div id="preview"></div>
+    </div>
+
+    <script>
+        const iconSizes = [
+            { size: 72, filename: 'icon-72x72.png' },
+            { size: 96, filename: 'icon-96x96.png' },
+            { size: 128, filename: 'icon-128x128.png' },
+            { size: 144, filename: 'icon-144x144.png' },
+            { size: 152, filename: 'icon-152x152.png' },
+            { size: 192, filename: 'icon-192x192.png' },
+            { size: 384, filename: 'icon-384x384.png' },
+            { size: 512, filename: 'icon-512x512.png' }
+        ];
+
+        function generateIcons() {
+            const fileInput = document.getElementById('sourceImage');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('🐻 Please select the bear cub icon image first!');
+                return;
+            }
+
+            const progressDiv = document.getElementById('progress');
+            const previewDiv = document.getElementById('preview');
+
+            progressDiv.innerHTML = '<div class="progress">🐻 Loading your adorable bear cub image...</div>';
+            previewDiv.innerHTML = '';
+
+            const img = new Image();
+            img.onload = function() {
+                progressDiv.innerHTML = '<div class="progress">⚡ Creating professional bear cub icons with transparent backgrounds...</div>';
+
+                iconSizes.forEach((iconConfig, index) => {
+                    setTimeout(() => {
+                        // Create ultra high-quality canvas
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        canvas.width = iconConfig.size;
+                        canvas.height = iconConfig.size;
+
+                        // Ultra high-quality rendering
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+
+                        // Clear to transparent
+                        ctx.clearRect(0, 0, iconConfig.size, iconConfig.size);
+
+                        // Scale image larger than canvas to fill rounded corners
+                        // When OS applies rounded corners, the scaled image will still fill visible area
+                        const scale = 1.15; // 15% larger to compensate for rounded corner cropping
+                        const drawSize = iconConfig.size * scale;
+                        const drawX = (iconConfig.size - drawSize) / 2; // Center the oversized image
+                        const drawY = (iconConfig.size - drawSize) / 2;
+
+                        // Draw with perfect scaling
+                        ctx.drawImage(img, drawX, drawY, drawSize, drawSize);
+
+                        // Export with maximum quality
+                        canvas.toBlob((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = iconConfig.filename;
+                            a.click();
+
+                            // Create beautiful preview
+                            const preview = document.createElement('div');
+                            preview.className = 'icon-preview';
+
+                            const previewImg = document.createElement('img');
+                            previewImg.src = url;
+                            previewImg.width = Math.min(iconConfig.size, 80);
+                            previewImg.height = Math.min(iconConfig.size, 80);
+
+                            const label = document.createElement('div');
+                            label.textContent = `${iconConfig.size}×${iconConfig.size}px`;
+
+                            preview.appendChild(previewImg);
+                            preview.appendChild(label);
+                            previewDiv.appendChild(preview);
+
+                            URL.revokeObjectURL(url);
+                        }, 'image/png', 1.0);
+
+                        const progress = Math.round(((index + 1) / iconSizes.length) * 100);
+                        progressDiv.innerHTML = `<div class="progress">🎨 Generated ${index + 1}/${iconSizes.length} bear cub icons (${progress}%)</div>`;
+
+                        if (index === iconSizes.length - 1) {
+                            setTimeout(() => {
+                                progressDiv.innerHTML = `
+                                    <div class="progress" style="background: rgba(168, 192, 154, 0.2); border-left-color: #a8c09a;">
+                                        ✅ <strong>All ${iconSizes.length} Linguist Cub icons generated!</strong><br>
+                                        🐻 Your bear cub icons are ready for deployment<br>
+                                        📁 Check your Downloads folder<br>
+                                        📱 Perfect for iOS and Android home screens
+                                    </div>
+                                `;
+                            }, 500);
+                        }
+                    }, index * 400);
+                });
+            };
+
+            img.src = URL.createObjectURL(file);
+        }
+    </script>
+</body>
+</html>

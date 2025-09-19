@@ -23,7 +23,11 @@
       "Bash(copy:*)",
       "WebFetch(domain:github.com)",
       "Bash(start \"C:\\Users\\goerg\\OneDrive\\Documents\\ClaudeCodeTest\\toddler-words-app\\generate-professional-icons.html\")",
-      "Bash(git merge:*)"
+      "Bash(start \"C:\\Users\\goerg\\OneDrive\\Documents\\ClaudeCodeTest\\toddler-words-app\\index.html\")",
+      "Bash(git remote set-url:*)",
+      "Bash(git merge:*)",
+      "Bash(start \"C:\\Users\\goerg\\OneDrive\\Documents\\ClaudeCodeTest\\toddler-words-app\\generate-cub-icons.html\")",
+      "Bash(start \"C:\\Users\\goerg\\OneDrive\\Documents\\ClaudeCodeTest\\toddler-words-app\\generate-better-icons.html\")"
     ],
     "deny": [],
     "ask": []
