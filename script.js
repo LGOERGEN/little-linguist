@@ -1573,8 +1573,19 @@ class BabyWordsTracker {
             () => this.toggleWordSpeaking(language, categoryKey, wordIndex)
         );
 
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'word-delete-btn';
+        deleteButton.title = 'Delete word';
+        deleteButton.innerHTML = '×';
+        deleteButton.onclick = (e) => {
+            e.stopPropagation();
+            this.confirmDeleteWord(language, categoryKey, wordIndex, word.word);
+        };
+
         controls.appendChild(understandingToggle);
         controls.appendChild(speakingToggle);
+        controls.appendChild(deleteButton);
 
         // Create age selector (only show when speaking is true)
         const ageSelector = this.createAgeSelector(language, categoryKey, wordIndex, word);
@@ -2433,6 +2444,9 @@ class BabyWordsTracker {
             // Re-initialize the form with current child data
             this.initializeChildProfile();
 
+            // Add click-outside-to-close functionality
+            this.addChildEditClickOutside();
+
             // Focus on the name input
             setTimeout(() => {
                 const nameInput = document.getElementById('child-name');
@@ -2448,7 +2462,61 @@ class BabyWordsTracker {
         const editSection = document.getElementById('child-edit-section');
         if (editSection) {
             editSection.style.display = 'none';
+            // Remove click-outside event listener
+            this.removeChildEditClickOutside();
         }
+    }
+
+    addChildEditClickOutside() {
+        // Remove any existing listener first
+        this.removeChildEditClickOutside();
+
+        this.childEditClickOutsideHandler = (event) => {
+            const editSection = document.getElementById('child-edit-section');
+            const editContent = editSection?.querySelector('.child-edit-content');
+
+            if (editSection && editSection.style.display === 'block') {
+                // Check if click is outside the edit content area
+                if (editContent && !editContent.contains(event.target)) {
+                    this.closeChildEdit();
+                }
+            }
+        };
+
+        document.addEventListener('click', this.childEditClickOutsideHandler);
+    }
+
+    removeChildEditClickOutside() {
+        if (this.childEditClickOutsideHandler) {
+            document.removeEventListener('click', this.childEditClickOutsideHandler);
+            this.childEditClickOutsideHandler = null;
+        }
+    }
+
+    confirmDeleteWord(language, categoryKey, wordIndex, wordText) {
+        if (confirm(`Are you sure you want to delete the word "${wordText}"?`)) {
+            this.deleteWord(language, categoryKey, wordIndex);
+        }
+    }
+
+    deleteWord(language, categoryKey, wordIndex) {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const category = activeChild.categories[language][categoryKey];
+        if (!category || !category.words || wordIndex < 0 || wordIndex >= category.words.length) {
+            console.error('Invalid word deletion parameters:', { language, categoryKey, wordIndex });
+            return;
+        }
+
+        // Remove the word from the array
+        category.words.splice(wordIndex, 1);
+
+        // Save data and update display
+        this.saveData();
+        this.renderWords();
+        this.updateStatistics();
+        this.generateTimelineChart();
     }
 
     confirmDeleteChild(childId) {

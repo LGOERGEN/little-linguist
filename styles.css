@@ -1640,6 +1640,29 @@ body {
     align-items: center;
 }
 
+.word-delete-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.word-delete-btn:hover {
+    background: #ff0000;
+    transform: scale(1.1);
+}
+
 .comprehension-toggle {
     display: flex;
     flex-direction: column;
