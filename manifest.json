@@ -1,8 +1,8 @@
 {
-  "name": "Little Linguist",
-  "short_name": "Linguist",
+  "name": "Linguist Cub",
+  "short_name": "Linguist Cub",
   "description": "Track your baby's language development in English and Portuguese",
-  "start_url": "./"
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#6c9bd1",
