@@ -906,28 +906,16 @@ class BabyWordsTracker {
 
 
     addNewChild() {
-        // For mobile compatibility, use a more reliable approach than prompt()
-        let name = null;
+        // Create new child with default name and immediately open edit area
+        const name = 'New Child';
 
-        // Try prompt first, but handle mobile issues
-        try {
-            name = prompt('Enter the child\'s name:', 'New Child');
-        } catch (error) {
-            console.log('Prompt failed, using fallback');
-        }
-
-        // If prompt failed or was cancelled, create with default name and let user edit
-        if (!name || !name.trim()) {
-            name = 'New Child';
-        }
-
-        const childId = this.createNewChild(name.trim(), null, ['english', 'portuguese'], true);
+        const childId = this.createNewChild(name, null, ['english', 'portuguese'], true);
         this.renderChildProfiles();
         this.renderCategories();
         this.updateStatistics();
         this.checkMilestones();
 
-        // Open edit section for new child setup (especially important on mobile)
+        // Open edit section immediately for user to set name, birth date, etc.
         this.editChild(childId);
     }
 
