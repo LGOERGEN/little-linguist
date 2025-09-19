@@ -1096,6 +1096,39 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Language Sections (consolidated view) */
+.language-section {
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background-color: var(--primary-white);
+}
+
+.language-header {
+    background: linear-gradient(135deg, var(--soft-blue), var(--sage-green));
+    color: var(--primary-white);
+    padding: var(--spacing-md);
+    cursor: default;
+}
+
+.language-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.language-content {
+    background-color: var(--primary-white);
+}
+
+.language-content.expanded {
+    display: block;
+}
+
 .english-category {
     border-top: 4px solid var(--soft-blue);
 }
@@ -1153,16 +1186,38 @@ body {
 
 .words-list {
     padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xs);
+}
+
+/* Mobile: 1 column, Desktop small: 2 columns, Desktop large: 3 columns */
+@media (max-width: 600px) {
+    .words-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    .words-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 901px) {
+    .words-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 /* Word item container */
 .word-item-container {
-    margin: 2px 0;
+    margin: 0;
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     background-color: var(--primary-white);
-    padding: 8px;
+    padding: 6px;
     transition: all 0.2s ease;
 }
 

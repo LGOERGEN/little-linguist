@@ -984,15 +984,12 @@ class BabyWordsTracker {
         // Get selected languages, default to both if none selected
         const selectedLanguages = activeChild.selectedLanguages || ['english', 'portuguese'];
 
-        // Render categories for selected languages only
+        // Render consolidated language sections (auto-expanded)
         selectedLanguages.forEach(language => {
             if (activeChild.categories[language]) {
-                console.log(`Rendering ${language} categories:`, Object.keys(activeChild.categories[language]));
-                Object.keys(activeChild.categories[language]).forEach(categoryKey => {
-                    const category = activeChild.categories[language][categoryKey];
-                    const categoryCard = this.createCategoryCard(language, categoryKey, category);
-                    container.appendChild(categoryCard);
-                });
+                console.log(`Rendering ${language} consolidated section:`, Object.keys(activeChild.categories[language]));
+                const languageSection = this.createConsolidatedLanguageSection(language, activeChild.categories[language]);
+                container.appendChild(languageSection);
             } else {
                 console.log(`No ${language} categories found for child`);
             }
@@ -1054,6 +1051,46 @@ class BabyWordsTracker {
         card.appendChild(content);
 
         return card;
+    }
+
+    createConsolidatedLanguageSection(language, categories) {
+        const section = document.createElement('div');
+        section.className = `language-section ${language}-section`;
+        section.dataset.language = language;
+
+        // Create language header
+        const header = document.createElement('div');
+        header.className = 'language-header';
+
+        const title = document.createElement('h2');
+        title.className = 'language-title';
+        const languageFlag = language === 'english' ? '🇬🇧' : '🇧🇷';
+        const languageName = language === 'english' ? 'English' : 'Portuguese';
+        title.textContent = `${languageFlag} ${languageName}`;
+
+        header.appendChild(title);
+
+        // Create words container (always expanded)
+        const content = document.createElement('div');
+        content.className = 'language-content expanded';
+
+        const wordsList = document.createElement('div');
+        wordsList.className = 'words-list';
+
+        // Combine all words from all categories
+        Object.keys(categories).forEach(categoryKey => {
+            const category = categories[categoryKey];
+            category.words.forEach((word, wordIndex) => {
+                const wordItem = this.createWordItem(language, categoryKey, word, wordIndex);
+                wordsList.appendChild(wordItem);
+            });
+        });
+
+        content.appendChild(wordsList);
+        section.appendChild(header);
+        section.appendChild(content);
+
+        return section;
     }
 
     createWordItem(language, categoryKey, word, wordIndex) {
@@ -1214,6 +1251,7 @@ class BabyWordsTracker {
     }
 
     toggleWordUnderstanding(language, categoryKey, wordIndex) {
+        console.log('toggleWordUnderstanding called:', { language, categoryKey, wordIndex });
         const activeChild = this.getActiveChild();
         if (!activeChild) return;
 
@@ -1233,6 +1271,7 @@ class BabyWordsTracker {
     }
 
     toggleWordSpeaking(language, categoryKey, wordIndex) {
+        console.log('toggleWordSpeaking called:', { language, categoryKey, wordIndex });
         const activeChild = this.getActiveChild();
         if (!activeChild) return;
 
@@ -1319,7 +1358,9 @@ class BabyWordsTracker {
         if (!activeChild) return;
 
         const word = activeChild.categories[language][categoryKey].words[wordIndex];
-        const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"] [data-word-id="${wordIndex}"]`);
+        const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"][data-word-id="${wordIndex}"]`);
+
+        console.log('updateWordDisplay called:', { language, categoryKey, wordIndex, word, wordElement });
 
         if (wordElement) {
             // Update understanding toggle
