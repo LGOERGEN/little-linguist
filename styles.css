@@ -97,8 +97,8 @@ body {
 }
 
 .cub-logo {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
@@ -411,9 +411,9 @@ body {
 
 .child-profile-card.active {
     background: rgba(255, 255, 255, 0.2);
-    border-color: var(--sage-green);
+    border-color: #5e8a52;
     border-width: 3px;
-    box-shadow: 0 0 0 2px rgba(168, 192, 154, 0.4);
+    box-shadow: 0 0 0 2px rgba(94, 138, 82, 0.6);
 }
 
 .child-profile-name {
@@ -429,7 +429,7 @@ body {
 }
 
 .child-profile-card.active .child-profile-name {
-    color: var(--sage-green);
+    color: #5e8a52;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 

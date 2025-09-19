@@ -1148,12 +1148,15 @@ class BabyWordsTracker {
     }
 
     changeWordAge(language, categoryKey, wordIndex, delta) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
-        const currentAge = word.firstSpokenAge || this.data.babyAge || 12;
-        const newAge = Math.max(1, Math.min(60, currentAge + delta));
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
 
-        // Don't allow age greater than current baby age
-        const maxAge = this.data.babyAge || 12;
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
+        const currentAge = word.firstSpokenAge || (activeChild.birthDate ? this.calculateAgeInMonths(activeChild.birthDate) : 12);
+        const newAge = Math.max(1, currentAge + delta);
+
+        // Don't allow age greater than current child's age
+        const maxAge = activeChild.birthDate ? this.calculateAgeInMonths(activeChild.birthDate) : 60;
         word.firstSpokenAge = Math.min(newAge, maxAge);
 
         this.saveData();
@@ -1162,7 +1165,10 @@ class BabyWordsTracker {
     }
 
     updateWordAgeDisplay(language, categoryKey, wordIndex) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
         const ageSelector = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"] [data-word-index="${wordIndex}"] .age-display`);
 
         if (ageSelector) {
@@ -1218,8 +1224,13 @@ class BabyWordsTracker {
             word.speaking = true;
             word.understanding = true;
             // Set default age to current calculated age
-            const ageInMonths = activeChild.birthDate ? this.calculateAgeInMonths(activeChild.birthDate) : 12;
-            word.firstSpokenAge = ageInMonths;
+            if (activeChild.birthDate) {
+                const ageInMonths = this.calculateAgeInMonths(activeChild.birthDate);
+                word.firstSpokenAge = ageInMonths;
+            } else {
+                // If no birth date set, use a default reasonable age and prompt user to set birth date
+                word.firstSpokenAge = 12;
+            }
         } else {
             // Turning speaking OFF
             word.speaking = false;
@@ -1234,16 +1245,26 @@ class BabyWordsTracker {
     }
 
     promptForAge(language, categoryKey, wordIndex, onConfirm) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
-        const currentAge = this.data.babyAge || 12;
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
+
+        // Check if child has a birth date set
+        if (!activeChild.birthDate) {
+            alert(`Please set ${activeChild.name}'s birth date first in their profile settings to track word ages accurately.`);
+            return;
+        }
+
+        const currentAge = this.calculateAgeInMonths(activeChild.birthDate);
         const languageName = language === 'english' ? 'English' : 'Portuguese';
         const wordText = word.word;
 
-        console.log('Prompting for age:', { language, categoryKey, wordIndex, wordText });
+        console.log('Prompting for age:', { language, categoryKey, wordIndex, wordText, childName: activeChild.name, currentAge });
 
         // Use a simple prompt for now - can be enhanced with a custom modal later
         const ageInput = prompt(
-            `At what age (in months) did your baby first say "${wordText}" in ${languageName}?\n\nCurrent age: ${currentAge} months\nLeave empty to use current age (${currentAge}):`,
+            `At what age (in months) did ${activeChild.name} first say "${wordText}" in ${languageName}?\n\nCurrent age: ${currentAge} months\nLeave empty to use current age (${currentAge}):`,
             currentAge.toString()
         );
 
@@ -1263,19 +1284,22 @@ class BabyWordsTracker {
         }
 
         if (age > currentAge) {
-            alert(`Age cannot be more than baby's current age (${currentAge} months)`);
+            alert(`Age cannot be more than ${activeChild.name}'s current age (${currentAge} months)`);
             return;
         }
 
         // Set the age and call the callback
         word.firstSpokenAge = age;
-        console.log('✅ Set first spoken age for word:', word.word, 'Age:', age);
+        console.log('✅ Set first spoken age for word:', word.word, 'Age:', age, 'Child:', activeChild.name);
         onConfirm();
     }
 
     // Update individual word display without re-rendering entire categories
     updateWordDisplay(language, categoryKey, wordIndex) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
         const wordElement = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"] [data-word-id="${wordIndex}"]`);
 
         if (wordElement) {
@@ -1307,6 +1331,18 @@ class BabyWordsTracker {
     }
 
     updateStatistics() {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) {
+            // No active child, reset stats
+            document.getElementById('total-speaking').textContent = 0;
+            document.getElementById('total-understanding').textContent = 0;
+            document.getElementById('english-percentage').textContent = '0 words (0%)';
+            document.getElementById('portuguese-percentage').textContent = '0 words (0%)';
+            document.getElementById('english-progress').style.width = '0%';
+            document.getElementById('portuguese-progress').style.width = '0%';
+            return;
+        }
+
         let totalSpeaking = 0;
         let totalUnderstanding = 0;
         let englishSpeaking = 0;
@@ -1315,8 +1351,8 @@ class BabyWordsTracker {
         let portugueseUnderstanding = 0;
 
         // Count English words
-        if (this.data.categories.english) {
-            Object.values(this.data.categories.english).forEach(category => {
+        if (activeChild.categories.english) {
+            Object.values(activeChild.categories.english).forEach(category => {
                 if (category.words) {
                     category.words.forEach(word => {
                         if (word.speaking) {
@@ -1333,8 +1369,8 @@ class BabyWordsTracker {
         }
 
         // Count Portuguese words
-        if (this.data.categories.portuguese) {
-            Object.values(this.data.categories.portuguese).forEach(category => {
+        if (activeChild.categories.portuguese) {
+            Object.values(activeChild.categories.portuguese).forEach(category => {
                 if (category.words) {
                     category.words.forEach(word => {
                         if (word.speaking) {
@@ -1501,12 +1537,18 @@ class BabyWordsTracker {
         const chartContainer = document.getElementById('timeline-chart');
         console.log('Generating timeline chart...');
 
-        // Collect all word data with ages
+        const activeChild = this.getActiveChild();
+        if (!activeChild) {
+            this.renderEmptyChart(chartContainer);
+            return;
+        }
+
+        // Collect all word data with ages for the active child
         const wordData = [];
 
         // Collect English words
-        if (this.data.categories.english) {
-            Object.values(this.data.categories.english).forEach(category => {
+        if (activeChild.categories.english) {
+            Object.values(activeChild.categories.english).forEach(category => {
                 if (category.words) {
                     category.words.forEach(word => {
                         if (word.speaking && word.firstSpokenAge) {
@@ -1522,8 +1564,8 @@ class BabyWordsTracker {
         }
 
         // Collect Portuguese words
-        if (this.data.categories.portuguese) {
-            Object.values(this.data.categories.portuguese).forEach(category => {
+        if (activeChild.categories.portuguese) {
+            Object.values(activeChild.categories.portuguese).forEach(category => {
                 if (category.words) {
                     category.words.forEach(word => {
                         if (word.speaking && word.firstSpokenAge) {
@@ -1859,6 +1901,7 @@ class BabyWordsTracker {
             this.renderCategories();
             this.updateStatistics();
             this.checkMilestones();
+            this.generateTimelineChart();
         }
     }
 
@@ -1937,6 +1980,7 @@ class BabyWordsTracker {
         this.renderCategories();
         this.updateStatistics();
         this.checkMilestones();
+        this.generateTimelineChart();
 
         // Show success message
         this.showToast('Child profile deleted successfully');
