@@ -2509,12 +2509,25 @@ class BabyWordsTracker {
             return;
         }
 
+        // Find and remove the word card from DOM immediately
+        const wordCard = document.querySelector(`[data-language="${language}"][data-category="${categoryKey}"][data-word-id="${wordIndex}"]`);
+        if (wordCard) {
+            wordCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            wordCard.style.opacity = '0';
+            wordCard.style.transform = 'scale(0.8)';
+
+            setTimeout(() => {
+                if (wordCard.parentNode) {
+                    wordCard.parentNode.removeChild(wordCard);
+                }
+            }, 300);
+        }
+
         // Remove the word from the array
         category.words.splice(wordIndex, 1);
 
-        // Save data and update display
+        // Save data and update display (but skip re-rendering since we already removed the card)
         this.saveData();
-        this.renderWords();
         this.updateStatistics();
         this.generateTimelineChart();
     }

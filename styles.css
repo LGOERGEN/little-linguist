@@ -1641,14 +1641,14 @@ body {
 }
 
 .word-delete-btn {
-    background: #ff4444;
-    color: white;
+    background: #e0e0e0;
+    color: #666;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
-    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: normal;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1656,11 +1656,14 @@ body {
     margin-left: auto;
     transition: all 0.2s ease;
     line-height: 1;
+    opacity: 0.6;
 }
 
 .word-delete-btn:hover {
-    background: #ff0000;
-    transform: scale(1.1);
+    background: #d0d0d0;
+    color: #333;
+    opacity: 1;
+    transform: scale(1.05);
 }
 
 .comprehension-toggle {
