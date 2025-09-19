@@ -76,7 +76,7 @@ body {
 .header {
     background: linear-gradient(135deg, var(--soft-blue), var(--sage-green));
     color: var(--primary-white);
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     text-align: center;
     position: sticky;
     top: 0;
@@ -88,8 +88,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    margin-bottom: var(--spacing-lg);
+    gap: 2px;
+    margin-bottom: var(--spacing-xs);
 }
 
 .cub-icon {
@@ -98,15 +98,15 @@ body {
 }
 
 .cub-logo {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
-    filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
     transition: all 0.3s ease;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    padding: 15px;
+    padding: 10px;
     animation: gentle-float 4s ease-in-out infinite;
 }
 
@@ -123,9 +123,9 @@ body {
 /* Mobile responsive icon size */
 @media (max-width: 767px) {
     .cub-logo {
-        width: 90px;
-        height: 90px;
-        padding: 12px;
+        width: 60px;
+        height: 60px;
+        padding: 8px;
     }
 
     /* Better child profile tabs for mobile readability */
@@ -143,18 +143,19 @@ body {
 
     .child-profile-card.active .child-profile-name {
         font-weight: 800;
-        color: #ffffff;
+        color: #2c3e50;
     }
 }
 
 .header-title {
     font-family: 'Dancing Script', cursive;
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     color: var(--primary-white);
     text-align: center;
+    margin: 0;
 }
 
 .child-info-container {
@@ -303,8 +304,8 @@ body {
 }
 
 .child-info-container.new-style.expanded {
-    max-height: 400px;
-    padding: var(--spacing-lg);
+    max-height: 500px;
+    padding: var(--spacing-sm);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-top: none;
 }
@@ -312,7 +313,7 @@ body {
 .child-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-sm);
 }
 
 /* Mobile: Single column form layout */
@@ -320,6 +321,71 @@ body {
     .child-form-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
+    }
+
+    .child-edit-container {
+        padding: var(--spacing-sm);
+        margin: 0 var(--spacing-xs);
+    }
+
+    .child-edit-close {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .form-input, .form-select {
+        height: 40px;
+        font-size: 16px;
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+
+    .form-label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .language-checkbox-group {
+        gap: var(--spacing-xs);
+    }
+
+    .language-checkbox-item {
+        padding: 8px 12px;
+        border-radius: 8px;
+        min-height: 35px;
+        font-size: 14px;
+    }
+
+    .child-edit-title {
+        font-size: 16px;
+    }
+
+    .child-action-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        border-width: 2px;
+    }
+
+    .child-actions {
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+    }
+
+    /* Make only form submit buttons appropriately sized */
+    .btn-primary, .btn-save, .btn-cancel {
+        min-height: 44px;
+        font-size: 16px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    /* Improve touch targets for interactive elements */
+    .form-input:focus, .form-select:focus {
+        outline: 3px solid var(--sage-green);
+        outline-offset: 2px;
     }
 }
 
@@ -330,7 +396,7 @@ body {
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: 4px;
 }
 
 .form-label {
@@ -425,10 +491,10 @@ body {
 
 /* Child Profiles Management */
 .child-profiles-section {
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-md);
+    gap: var(--spacing-xs);
     align-items: flex-start;
     justify-content: center;
 }
@@ -465,10 +531,10 @@ body {
 }
 
 .child-profile-card.active {
-    background: rgba(94, 138, 82, 0.25);
-    border-color: #5e8a52;
+    background: rgba(168, 192, 154, 0.3);
+    border-color: var(--sage-green);
     border-width: 3px;
-    box-shadow: 0 0 0 3px rgba(94, 138, 82, 0.4), 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 0 3px rgba(168, 192, 154, 0.5), 0 4px 20px rgba(0, 0, 0, 0.2);
     transform: translateY(-3px);
 }
 
@@ -484,8 +550,9 @@ body {
 }
 
 .child-profile-card.active .child-profile-name {
-    color: #5e8a52;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: #2c3e50;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
+    font-weight: 700;
 }
 
 /* Child action buttons under circles */
@@ -495,13 +562,13 @@ body {
 }
 
 .child-action-btn {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     color: var(--primary-white);
-    font-size: 10px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -601,19 +668,29 @@ body {
     animation: slideDown 0.3s ease-out;
 }
 
+/* Mobile edit section improvements */
+@media (max-width: 767px) {
+    .child-edit-section {
+        margin-top: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+}
+
 .child-edit-container {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm);
     backdrop-filter: blur(10px);
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .child-edit-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
 }
 
 .child-edit-title {
@@ -653,7 +730,7 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
-        max-height: 400px;
+        max-height: 500px;
     }
 }
 
