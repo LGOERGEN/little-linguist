@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#6c9bd1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Little Linguist - Language Development Tracker</title>
+    <title>Linguist Cub - Language Development Tracker</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
@@ -17,17 +17,55 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <div class="header-title">Little Linguist</div>
-            <div class="child-info-container">
-                <div class="name-input-container">
-                    <label for="child-name" class="name-label">Child's Name</label>
-                    <input type="text" id="child-name" placeholder="Enter your child's name" class="name-input">
+            <div class="header-container">
+                <div class="cub-icon">
+                    <img src="new resources/bear-icon-exact.png.png" alt="Linguist Cub" class="cub-logo">
                 </div>
-                <div class="age-input-container">
-                    <label for="baby-age" class="age-label">Age</label>
-                    <div class="age-input-wrapper">
-                        <input type="number" id="baby-age" min="0" max="60" value="12" class="age-input" inputmode="numeric" pattern="[0-9]*">
-                        <span class="age-unit">months</span>
+                <div class="header-title">Linguist Cub</div>
+            </div>
+            <!-- Child Profiles List -->
+            <div class="child-profiles-section" id="child-profiles-section">
+                <!-- Child profiles will be dynamically generated here -->
+                <div class="add-child-section">
+                    <button class="add-child-btn" id="add-child-btn">
+                        <span class="add-icon">+</span>
+                        <span class="add-text">Add Another Child</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Child Edit Section (hidden by default, shown below circles when editing) -->
+            <div class="child-edit-section" id="child-edit-section" style="display: none;">
+                <div class="child-edit-container">
+                    <div class="child-edit-header">
+                        <h3 class="child-edit-title" id="child-edit-title">Edit Child Profile</h3>
+                        <button class="child-edit-close" id="child-edit-close">×</button>
+                    </div>
+                    <div class="child-form-grid">
+                        <div class="form-group">
+                            <label for="child-name" class="form-label">Child's Name</label>
+                            <input type="text" id="child-name" placeholder="Enter your child's name" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="birth-date" class="form-label">Date of Birth</label>
+                            <input type="date" id="birth-date" class="form-input">
+                            <div class="age-display" id="age-display"></div>
+                        </div>
+                        <div class="form-group languages-group">
+                            <label class="form-label">Languages to Track</label>
+                            <div class="language-checkboxes">
+                                <label class="language-checkbox">
+                                    <input type="checkbox" id="lang-english" value="english" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="language-name">🇺🇸 English</span>
+                                </label>
+                                <label class="language-checkbox">
+                                    <input type="checkbox" id="lang-portuguese" value="portuguese" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="language-name">🇵🇹 Portuguese</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

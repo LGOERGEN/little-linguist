@@ -11,10 +11,14 @@ class BabyWordsTracker {
         this.searchTerm = '';
         this.currentCategory = null;
         this.expandedCategories = new Set(); // Track which categories are expanded
+        this.activeChildId = this.data.activeChildId || null;
 
+        this.initializeChildren();
         this.initializeKidName();
         this.initializeWordData();
+        this.initializeChildProfile();
         this.bindEventListeners();
+        this.renderChildProfiles();
         this.renderCategories();
         this.updateStatistics();
         this.checkMilestones();
@@ -486,6 +490,33 @@ class BabyWordsTracker {
         }
     }
 
+    initializeChildProfile() {
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        // Initialize child name
+        const nameInput = document.getElementById('child-name');
+        if (nameInput) {
+            nameInput.value = activeChild.name || '';
+        }
+
+        // Initialize birth date
+        const birthDateInput = document.getElementById('birth-date');
+        if (birthDateInput) {
+            birthDateInput.value = activeChild.birthDate || '';
+        }
+
+        // Initialize language checkboxes
+        const selectedLanguages = activeChild.selectedLanguages || ['english', 'portuguese'];
+        const languageCheckboxes = document.querySelectorAll('.language-checkbox input[type="checkbox"]');
+        languageCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectedLanguages.includes(checkbox.value);
+        });
+
+        // Update age display
+        this.updateAgeDisplay();
+    }
+
     initializeWordData() {
         console.log('🔧 Initializing word data...');
         console.log('📋 Current categories:', this.data.categories);
@@ -666,10 +697,42 @@ class BabyWordsTracker {
     }
 
     bindEventListeners() {
-        // Age input
+        // Birth date input
+        const birthDateInput = document.getElementById('birth-date');
+        if (birthDateInput) {
+            birthDateInput.addEventListener('change', (e) => this.updateBirthDate(e.target.value));
+        }
+
+        // Child name input
+        const childNameInput = document.getElementById('child-name');
+        if (childNameInput) {
+            childNameInput.addEventListener('input', (e) => this.updateChildName(e.target.value));
+        }
+
+        // Language checkboxes
+        const languageCheckboxes = document.querySelectorAll('.language-checkbox input[type="checkbox"]');
+        languageCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => this.updateSelectedLanguages());
+        });
+
+        // Add child button
+        const addChildBtn = document.getElementById('add-child-btn');
+        if (addChildBtn) {
+            addChildBtn.addEventListener('click', () => this.addNewChild());
+        }
+
+        // Child edit close button
+        const childEditClose = document.getElementById('child-edit-close');
+        if (childEditClose) {
+            childEditClose.addEventListener('click', () => this.closeChildEdit());
+        }
+
+        // Legacy age input (keeping for backward compatibility)
         const ageInput = document.getElementById('baby-age');
-        ageInput.addEventListener('input', (e) => this.updateAge(e.target.value));
-        ageInput.addEventListener('change', () => this.checkMilestones());
+        if (ageInput) {
+            ageInput.addEventListener('input', (e) => this.updateAge(e.target.value));
+            ageInput.addEventListener('change', () => this.checkMilestones());
+        }
 
 
         // Search functionality
@@ -719,6 +782,103 @@ class BabyWordsTracker {
         this.data.babyAge = parseInt(age) || 0;
         this.saveData();
         this.checkMilestones();
+    }
+
+
+    updateBirthDate(birthDate) {
+        const activeChild = this.getActiveChild();
+        if (activeChild) {
+            activeChild.birthDate = birthDate;
+            this.saveData();
+            this.updateAgeDisplay();
+            this.renderChildProfiles();
+            this.checkMilestones();
+        }
+    }
+
+    updateChildName(name) {
+        const activeChild = this.getActiveChild();
+        if (activeChild) {
+            activeChild.name = name;
+            this.saveData();
+            this.updateChildSummary();
+            this.renderChildProfiles();
+        }
+    }
+
+    updateSelectedLanguages() {
+        const selectedLanguages = [];
+        const checkboxes = document.querySelectorAll('.language-checkbox input[type="checkbox"]:checked');
+        checkboxes.forEach(checkbox => {
+            selectedLanguages.push(checkbox.value);
+        });
+
+        const activeChild = this.getActiveChild();
+        if (activeChild) {
+            activeChild.selectedLanguages = selectedLanguages;
+            this.saveData();
+            this.renderCategories(); // Re-render categories based on selected languages
+            this.updateStatistics();
+        }
+    }
+
+    calculateAgeInMonths(birthDate) {
+        if (!birthDate) return 0;
+
+        const birth = new Date(birthDate);
+        const today = new Date();
+
+        let months = (today.getFullYear() - birth.getFullYear()) * 12;
+        months -= birth.getMonth();
+        months += today.getMonth();
+
+        if (today.getDate() < birth.getDate()) {
+            months--;
+        }
+
+        return Math.max(0, months);
+    }
+
+    calculateAge() {
+        const activeChild = this.getActiveChild();
+        if (!activeChild || !activeChild.birthDate) return null;
+
+        const months = this.calculateAgeInMonths(activeChild.birthDate);
+        if (months < 12) {
+            return `${months} month${months !== 1 ? 's' : ''}`;
+        } else {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            if (remainingMonths === 0) {
+                return `${years} year${years !== 1 ? 's' : ''}`;
+            } else {
+                return `${years} year${years !== 1 ? 's' : ''} ${remainingMonths} month${remainingMonths !== 1 ? 's' : ''}`;
+            }
+        }
+    }
+
+    updateAgeDisplay() {
+        const ageDisplay = document.getElementById('age-display');
+        const activeChild = this.getActiveChild();
+        if (ageDisplay && activeChild && activeChild.birthDate) {
+            const age = this.calculateAge();
+            ageDisplay.textContent = age ? `Age: ${age}` : '';
+        }
+    }
+
+
+    addNewChild() {
+        const name = prompt('Enter the child\'s name:', 'New Child');
+        if (name && name.trim()) {
+            const childId = this.createNewChild(name.trim(), null, ['english', 'portuguese'], true);
+            this.renderChildProfiles();
+            this.renderCategories();
+            this.updateStatistics();
+            this.checkMilestones();
+
+            // Open edit section for new child setup
+            this.editChild(childId);
+        }
     }
 
     handleSearch(term) {
@@ -792,31 +952,32 @@ class BabyWordsTracker {
         const container = document.getElementById('categories-container');
         container.innerHTML = '';
 
-        console.log('Rendering categories. Data structure:', this.data.categories);
-
-        // Render English categories first
-        if (this.data.categories.english) {
-            console.log('Rendering English categories:', Object.keys(this.data.categories.english));
-            Object.keys(this.data.categories.english).forEach(categoryKey => {
-                const category = this.data.categories.english[categoryKey];
-                const categoryCard = this.createCategoryCard('english', categoryKey, category);
-                container.appendChild(categoryCard);
-            });
-        } else {
-            console.log('No English categories found');
+        const activeChild = this.getActiveChild();
+        if (!activeChild) {
+            container.innerHTML = '<div style="text-align: center; color: white; padding: 2rem;">No active child selected</div>';
+            return;
         }
 
-        // Render Portuguese categories
-        if (this.data.categories.portuguese) {
-            console.log('Rendering Portuguese categories:', Object.keys(this.data.categories.portuguese));
-            Object.keys(this.data.categories.portuguese).forEach(categoryKey => {
-                const category = this.data.categories.portuguese[categoryKey];
-                const categoryCard = this.createCategoryCard('portuguese', categoryKey, category);
-                container.appendChild(categoryCard);
-            });
-        } else {
-            console.log('No Portuguese categories found');
-        }
+        console.log('Rendering categories for child:', activeChild.name);
+        console.log('Child categories:', activeChild.categories);
+        console.log('Selected languages:', activeChild.selectedLanguages);
+
+        // Get selected languages, default to both if none selected
+        const selectedLanguages = activeChild.selectedLanguages || ['english', 'portuguese'];
+
+        // Render categories for selected languages only
+        selectedLanguages.forEach(language => {
+            if (activeChild.categories[language]) {
+                console.log(`Rendering ${language} categories:`, Object.keys(activeChild.categories[language]));
+                Object.keys(activeChild.categories[language]).forEach(categoryKey => {
+                    const category = activeChild.categories[language][categoryKey];
+                    const categoryCard = this.createCategoryCard(language, categoryKey, category);
+                    container.appendChild(categoryCard);
+                });
+            } else {
+                console.log(`No ${language} categories found for child`);
+            }
+        });
 
         this.populateCustomWordCategoryOptions();
     }
@@ -1028,7 +1189,10 @@ class BabyWordsTracker {
     }
 
     toggleWordUnderstanding(language, categoryKey, wordIndex) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
         word.understanding = !word.understanding;
 
         // If speaking is true and understanding becomes false, turn off speaking too
@@ -1044,14 +1208,18 @@ class BabyWordsTracker {
     }
 
     toggleWordSpeaking(language, categoryKey, wordIndex) {
-        const word = this.data.categories[language][categoryKey].words[wordIndex];
+        const activeChild = this.getActiveChild();
+        if (!activeChild) return;
+
+        const word = activeChild.categories[language][categoryKey].words[wordIndex];
 
         if (!word.speaking) {
             // Turning speaking ON
             word.speaking = true;
             word.understanding = true;
-            // Set default age to current baby age
-            word.firstSpokenAge = this.data.babyAge || 12;
+            // Set default age to current calculated age
+            const ageInMonths = activeChild.birthDate ? this.calculateAgeInMonths(activeChild.birthDate) : 12;
+            word.firstSpokenAge = ageInMonths;
         } else {
             // Turning speaking OFF
             word.speaking = false;
@@ -1602,10 +1770,30 @@ class BabyWordsTracker {
     loadData() {
         try {
             const saved = localStorage.getItem('babyWordsData');
-            return saved ? JSON.parse(saved) : { categories: {}, babyAge: 0 };
+            const data = saved ? JSON.parse(saved) : { categories: {}, babyAge: 0 };
+
+            // Migrate old single-child data to multi-child format
+            if (!data.children) {
+                data.children = {};
+
+                // If there's existing data, create a default child
+                if (data.categories && Object.keys(data.categories).length > 0) {
+                    const defaultChildId = this.generateChildId();
+                    data.children[defaultChildId] = {
+                        id: defaultChildId,
+                        name: data.childName || data.kidName || 'My Child',
+                        birthDate: data.birthDate || null,
+                        selectedLanguages: data.selectedLanguages || ['english', 'portuguese'],
+                        categories: data.categories
+                    };
+                    data.activeChildId = defaultChildId;
+                }
+            }
+
+            return data;
         } catch (error) {
             console.error('Error loading data:', error);
-            return { categories: {}, babyAge: 0 };
+            return { categories: {}, babyAge: 0, children: {} };
         }
     }
 
@@ -1614,6 +1802,270 @@ class BabyWordsTracker {
             localStorage.setItem('babyWordsData', JSON.stringify(this.data));
         } catch (error) {
             console.error('Error saving data:', error);
+        }
+    }
+
+    generateChildId() {
+        return 'child_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    initializeChildren() {
+        // If no children exist, create a default one
+        if (!this.data.children || Object.keys(this.data.children).length === 0) {
+            this.createNewChild('My Child', null, ['english', 'portuguese'], true);
+        }
+
+        // If no active child, set the first one as active
+        if (!this.activeChildId && Object.keys(this.data.children).length > 0) {
+            this.activeChildId = Object.keys(this.data.children)[0];
+            this.data.activeChildId = this.activeChildId;
+        }
+    }
+
+    createNewChild(name = 'New Child', birthDate = null, languages = ['english', 'portuguese'], setAsActive = false) {
+        const childId = this.generateChildId();
+        const child = {
+            id: childId,
+            name: name,
+            birthDate: birthDate,
+            selectedLanguages: languages,
+            categories: this.getDefaultWordData()
+        };
+
+        this.data.children[childId] = child;
+
+        if (setAsActive) {
+            this.activeChildId = childId;
+            this.data.activeChildId = childId;
+        }
+
+        this.saveData();
+        return childId;
+    }
+
+    getActiveChild() {
+        return this.data.children[this.activeChildId] || null;
+    }
+
+    switchToChild(childId) {
+        if (this.data.children[childId]) {
+            this.activeChildId = childId;
+            this.data.activeChildId = childId;
+            this.saveData();
+
+            // Update UI
+            this.renderChildProfiles();
+            this.initializeChildProfile();
+            this.renderCategories();
+            this.updateStatistics();
+            this.checkMilestones();
+        }
+    }
+
+    editChild(childId) {
+        // Switch to the child first
+        this.switchToChild(childId);
+
+        // Show the edit section
+        const editSection = document.getElementById('child-edit-section');
+        const editTitle = document.getElementById('child-edit-title');
+
+        if (editSection && editTitle) {
+            const child = this.getActiveChild();
+            editTitle.textContent = `Edit ${child?.name || 'Child'} Profile`;
+            editSection.style.display = 'block';
+
+            // Re-initialize the form with current child data
+            this.initializeChildProfile();
+
+            // Focus on the name input
+            setTimeout(() => {
+                const nameInput = document.getElementById('child-name');
+                if (nameInput) {
+                    nameInput.focus();
+                    nameInput.select();
+                }
+            }, 100);
+        }
+    }
+
+    closeChildEdit() {
+        const editSection = document.getElementById('child-edit-section');
+        if (editSection) {
+            editSection.style.display = 'none';
+        }
+    }
+
+    confirmDeleteChild(childId) {
+        if (Object.keys(this.data.children).length <= 1) {
+            alert('Cannot delete the last child. At least one child profile is required.');
+            return;
+        }
+
+        const child = this.data.children[childId];
+        const childName = child ? child.name : 'this child';
+
+        const confirmed = confirm(
+            `Are you sure you want to delete ${childName}'s profile?\n\n` +
+            'This will permanently remove:\n' +
+            '• All word progress and tracking data\n' +
+            '• Personal information (name, birth date, languages)\n' +
+            '• Timeline and milestone records\n\n' +
+            'This action cannot be undone.'
+        );
+
+        if (confirmed) {
+            this.deleteChild(childId);
+        }
+    }
+
+    deleteChild(childId) {
+        delete this.data.children[childId];
+
+        // If deleted child was active, switch to another child
+        if (this.activeChildId === childId) {
+            const remainingChildIds = Object.keys(this.data.children);
+            this.activeChildId = remainingChildIds[0];
+            this.data.activeChildId = this.activeChildId;
+        }
+
+        this.saveData();
+
+        // Update UI
+        this.renderChildProfiles();
+        this.initializeChildProfile();
+        this.renderCategories();
+        this.updateStatistics();
+        this.checkMilestones();
+
+        // Show success message
+        this.showToast('Child profile deleted successfully');
+    }
+
+    renderChildProfiles() {
+        const container = document.getElementById('child-profiles-section');
+
+        // Clear container but keep the add child section
+        const addChildSection = container.querySelector('.add-child-section');
+        container.innerHTML = '';
+
+        Object.values(this.data.children).forEach(child => {
+            const profileWrapper = this.createChildProfileWrapper(child);
+            container.appendChild(profileWrapper);
+        });
+
+        // Re-add the add child section at the end
+        if (addChildSection) {
+            container.appendChild(addChildSection);
+        }
+    }
+
+    createChildProfileWrapper(child) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'child-profile-wrapper';
+
+        const card = this.createChildProfileCard(child);
+        const actions = this.createChildActions(child);
+
+        wrapper.appendChild(card);
+        wrapper.appendChild(actions);
+
+        return wrapper;
+    }
+
+    createChildProfileCard(child) {
+        const card = document.createElement('div');
+        card.className = `child-profile-card ${child.id === this.activeChildId ? 'active' : ''}`;
+        card.onclick = () => this.switchToChild(child.id);
+
+        // Create a shortened name for the circle (first name only or initials)
+        const displayName = this.getDisplayName(child.name);
+
+        card.innerHTML = `
+            <div class="child-profile-info">
+                <div class="child-profile-name">${displayName}</div>
+            </div>
+        `;
+
+        return card;
+    }
+
+    createChildActions(child) {
+        const actions = document.createElement('div');
+        actions.className = 'child-actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'child-action-btn edit';
+        editBtn.innerHTML = '✏️';
+        editBtn.title = 'Edit child profile';
+        editBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.editChild(child.id);
+        };
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'child-action-btn delete';
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.title = 'Delete child profile';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.confirmDeleteChild(child.id);
+        };
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+
+        return actions;
+    }
+
+    getDisplayName(fullName) {
+        if (!fullName || fullName.trim().length === 0) return '?';
+
+        const name = fullName.trim();
+
+        // If name is short (8 chars or less), use it as is
+        if (name.length <= 8) {
+            return name;
+        }
+
+        // Split by spaces and use first name
+        const parts = name.split(' ');
+        const firstName = parts[0];
+
+        // If first name is still too long, use initials
+        if (firstName.length > 8) {
+            return parts.map(part => part.charAt(0).toUpperCase()).join('');
+        }
+
+        return firstName;
+    }
+
+    calculateChildAge(birthDate) {
+        if (!birthDate) return 'Unknown age';
+
+        const birth = new Date(birthDate);
+        const today = new Date();
+
+        let months = (today.getFullYear() - birth.getFullYear()) * 12;
+        months -= birth.getMonth();
+        months += today.getMonth();
+
+        if (today.getDate() < birth.getDate()) {
+            months--;
+        }
+
+        months = Math.max(0, months);
+
+        if (months < 12) {
+            return `${months} month${months !== 1 ? 's' : ''}`;
+        } else {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            if (remainingMonths === 0) {
+                return `${years} year${years !== 1 ? 's' : ''}`;
+            } else {
+                return `${years} year${years !== 1 ? 's' : ''} ${remainingMonths} month${remainingMonths !== 1 ? 's' : ''}`;
+            }
         }
     }
 }
