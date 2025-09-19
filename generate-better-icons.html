@@ -17,7 +17,7 @@
         <label>Background Color: </label>
         <input type="color" id="bgColor" value="#6c9bd1">
         <label>Bear Size: </label>
-        <input type="range" id="bearSize" min="0.5" max="0.9" step="0.1" value="0.8">
+        <input type="range" id="bearSize" min="0.7" max="0.98" step="0.02" value="0.95">
         <span id="sizeValue">80%</span>
     </div>
 
@@ -52,63 +52,63 @@
             ctx.translate(center, center);
             ctx.scale(scale, scale);
 
-            // Bear head (larger circle)
+            // Bear head (much larger circle - fills most of icon)
             ctx.fillStyle = '#e8f4f8';
             ctx.beginPath();
-            ctx.arc(0, 0, 80, 0, Math.PI * 2);
+            ctx.arc(0, 0, 85, 0, Math.PI * 2);
             ctx.fill();
 
-            // Bear ears
+            // Bear ears (proportionally larger)
             ctx.fillStyle = '#e8f4f8';
             ctx.beginPath();
-            ctx.arc(-45, -45, 25, 0, Math.PI * 2);
+            ctx.arc(-50, -50, 28, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(45, -45, 25, 0, Math.PI * 2);
+            ctx.arc(50, -50, 28, 0, Math.PI * 2);
             ctx.fill();
 
             // Inner ears
             ctx.fillStyle = '#d1e7dd';
             ctx.beginPath();
-            ctx.arc(-45, -45, 12, 0, Math.PI * 2);
+            ctx.arc(-50, -50, 15, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(45, -45, 12, 0, Math.PI * 2);
+            ctx.arc(50, -50, 15, 0, Math.PI * 2);
             ctx.fill();
 
-            // Eyes
+            // Eyes (larger and more visible)
             ctx.fillStyle = '#2c3e50';
             ctx.beginPath();
-            ctx.arc(-25, -15, 6, 0, Math.PI * 2);
+            ctx.arc(-28, -18, 8, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(25, -15, 6, 0, Math.PI * 2);
+            ctx.arc(28, -18, 8, 0, Math.PI * 2);
             ctx.fill();
 
-            // Nose
+            // Nose (larger)
             ctx.fillStyle = '#34495e';
             ctx.beginPath();
-            ctx.arc(0, 5, 4, 0, Math.PI * 2);
+            ctx.arc(0, 8, 5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mouth
+            // Mouth (larger)
             ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.arc(0, 15, 15, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.arc(0, 20, 18, 0.2 * Math.PI, 0.8 * Math.PI);
             ctx.stroke();
 
-            // Letter "L" in a circle (for Linguist)
+            // Letter "L" in a circle (for Linguist) - positioned better
             ctx.fillStyle = bgColor;
             ctx.beginPath();
-            ctx.arc(0, 35, 20, 0, Math.PI * 2);
+            ctx.arc(0, 45, 22, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 24px Arial';
+            ctx.font = 'bold 28px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('L', 0, 35);
+            ctx.fillText('L', 0, 45);
 
             ctx.restore();
         }

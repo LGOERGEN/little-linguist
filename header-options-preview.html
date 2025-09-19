@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linguist Cub Header Options - New Design Font</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+            min-height: 100vh;
+        }
+        .preview-container {
+            max-width: 500px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .header-preview {
+            background: linear-gradient(135deg, #9fb5d8 0%, #87a8d1 25%, #6f9bc9 50%, #5a8fc2 75%, #4682bb 100%);
+            color: white;
+            padding: 24px 16px;
+            text-align: center;
+            position: relative;
+        }
+        .option-title {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Exact New Design Font - matching the image exactly */
+        .new-design-font {
+            font-family: 'Helvetica Neue', 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            font-weight: 100;
+            font-stretch: condensed;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
+        }
+
+        /* Option 1: Horizontal Side by Side - New Design Style */
+        .option-1 .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .option-1 .cub-logo {
+            width: 65px;
+            height: 65px;
+        }
+        .option-1 .brand-text {
+            text-align: left;
+        }
+        .option-1 .brand-title, .option-1 .brand-subtitle {
+            font-size: 1.6rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            line-height: 0.9;
+            margin: 2px 0;
+            text-transform: uppercase;
+        }
+
+        /* Option 2: Vertical Stack - New Design Style */
+        .option-2 .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .option-2 .cub-logo {
+            width: 75px;
+            height: 75px;
+        }
+        .option-2 .brand-title, .option-2 .brand-subtitle {
+            font-size: 1.4rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            line-height: 0.8;
+            margin: 1px 0;
+            text-transform: uppercase;
+        }
+
+        /* Option 3: Compact Horizontal - New Design Style */
+        .option-3 .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+        .option-3 .cub-logo {
+            width: 55px;
+            height: 55px;
+        }
+        .option-3 .brand-single {
+            font-size: 1.8rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+        }
+
+        /* Option 4: Large Icon Centered - New Design Style */
+        .option-4 .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .option-4 .cub-logo {
+            width: 85px;
+            height: 85px;
+        }
+        .option-4 .brand-title, .option-4 .brand-subtitle {
+            font-size: 1.2rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            line-height: 0.9;
+            margin: 1px 0;
+            text-transform: uppercase;
+        }
+
+        /* Option 5: Icon Left, Vertical Text Right - New Design Style */
+        .option-5 .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+        }
+        .option-5 .cub-logo {
+            width: 70px;
+            height: 70px;
+        }
+        .option-5 .brand-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .option-5 .brand-title, .option-5 .brand-subtitle {
+            font-size: 1.5rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            line-height: 0.8;
+            margin: 2px 0;
+            text-transform: uppercase;
+        }
+
+        /* Option 6: Minimal Single Line - New Design Style */
+        .option-6 .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .option-6 .cub-logo {
+            width: 50px;
+            height: 50px;
+        }
+        .option-6 .brand-single {
+            font-size: 1.4rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+        }
+
+        /* Option 7: Icon Above, Text Spaced - New Design Style */
+        .option-7 .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .option-7 .cub-logo {
+            width: 60px;
+            height: 60px;
+        }
+        .option-7 .brand-title, .option-7 .brand-subtitle {
+            font-size: 1.3rem;
+            font-weight: 100;
+            letter-spacing: 0.5em;
+            line-height: 1;
+            margin: 3px 0;
+            text-transform: uppercase;
+        }
+
+        /* Option 8: Side Layout with Larger Text - New Design Style */
+        .option-8 .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+        }
+        .option-8 .cub-logo {
+            width: 60px;
+            height: 60px;
+        }
+        .option-8 .brand-text {
+            text-align: left;
+        }
+        .option-8 .brand-title, .option-8 .brand-subtitle {
+            font-size: 1.8rem;
+            font-weight: 100;
+            letter-spacing: 0.3em;
+            line-height: 0.85;
+            margin: 3px 0;
+            text-transform: uppercase;
+        }
+
+        .demo-content {
+            padding: 20px;
+            background: white;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 style="text-align: center; color: white; margin-bottom: 30px; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">🐻 Linguist Cub Header Options - New Design Font</h1>
+
+    <!-- Option 1 -->
+    <div class="preview-container">
+        <div class="option-title">Option 1: Horizontal Side by Side - Clean & Modern</div>
+        <div class="header-preview option-1">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Matches new design font exactly - side by side layout</div>
+    </div>
+
+    <!-- Option 2 -->
+    <div class="preview-container">
+        <div class="option-title">Option 2: Vertical Stack - Icon Above</div>
+        <div class="header-preview option-2">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Vertical layout with larger icon, clean typography</div>
+    </div>
+
+    <!-- Option 3 -->
+    <div class="preview-container">
+        <div class="option-title">Option 3: Compact Horizontal - Single Line</div>
+        <div class="header-preview option-3">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-single">LINGUIST CUB</div>
+            </div>
+        </div>
+        <div class="demo-content">Compact design with single line text</div>
+    </div>
+
+    <!-- Option 4 -->
+    <div class="preview-container">
+        <div class="option-title">Option 4: Large Icon Centered - Prominent</div>
+        <div class="header-preview option-4">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Large icon emphasis with smaller spaced text</div>
+    </div>
+
+    <!-- Option 5 -->
+    <div class="preview-container">
+        <div class="option-title">Option 5: Icon Left, Vertical Text Right</div>
+        <div class="header-preview option-5">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Closest to original new design layout</div>
+    </div>
+
+    <!-- Option 6 -->
+    <div class="preview-container">
+        <div class="option-title">Option 6: Minimal Single Line - Ultra Clean</div>
+        <div class="header-preview option-6">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-single">LINGUIST CUB</div>
+            </div>
+        </div>
+        <div class="demo-content">Minimalist approach with wide letter spacing</div>
+    </div>
+
+    <!-- Option 7 -->
+    <div class="preview-container">
+        <div class="option-title">Option 7: Icon Above, Extra Spaced Text</div>
+        <div class="header-preview option-7">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Maximum letter spacing for elegant feel</div>
+    </div>
+
+    <!-- Option 8 -->
+    <div class="preview-container">
+        <div class="option-title">Option 8: Side Layout with Larger Text</div>
+        <div class="header-preview option-8">
+            <div class="header-container">
+                <img src="cub-icon.svg" alt="Linguist Cub" class="cub-logo">
+                <div class="brand-text">
+                    <div class="brand-title">LINGUIST</div>
+                    <div class="brand-subtitle">CUB</div>
+                </div>
+            </div>
+        </div>
+        <div class="demo-content">Bold presentation with larger font size</div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; color: #666;">
+        <p><strong>All options maintain your preferred gradient background!</strong></p>
+        <p>Let me know which option you prefer and I'll update the main page.</p>
+    </div>
+
+</body>
+</html>

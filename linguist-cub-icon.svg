@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- EXACT bear icon from reference image new design/new design.jpg -->
+
+  <!-- Left ear circle -->
+  <circle cx="65" cy="55" r="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="65" cy="55" r="6" fill="white"/>
+
+  <!-- Right ear circle -->
+  <circle cx="135" cy="55" r="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="135" cy="55" r="6" fill="white"/>
+
+  <!-- Main head shape - rounded rectangle exactly as shown -->
+  <path d="M 78 75 Q 78 55 100 55 Q 122 55 122 75 L 122 125 Q 122 145 100 145 Q 78 145 78 125 Z"
+        fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Rain-like dots pattern on forehead exactly as shown -->
+  <circle cx="88" cy="70" r="1" fill="white"/>
+  <circle cx="92" cy="67" r="1" fill="white"/>
+  <circle cx="96" cy="65" r="1" fill="white"/>
+  <circle cx="100" cy="68" r="1" fill="white"/>
+  <circle cx="104" cy="66" r="1" fill="white"/>
+  <circle cx="108" cy="69" r="1" fill="white"/>
+  <circle cx="112" cy="67" r="1" fill="white"/>
+
+  <circle cx="90" cy="78" r="1" fill="white"/>
+  <circle cx="94" cy="76" r="1" fill="white"/>
+  <circle cx="98" cy="74" r="1" fill="white"/>
+  <circle cx="102" cy="77" r="1" fill="white"/>
+  <circle cx="106" cy="75" r="1" fill="white"/>
+  <circle cx="110" cy="78" r="1" fill="white"/>
+
+  <circle cx="92" cy="85" r="1" fill="white"/>
+  <circle cx="96" cy="83" r="1" fill="white"/>
+  <circle cx="100" cy="86" r="1" fill="white"/>
+  <circle cx="104" cy="84" r="1" fill="white"/>
+  <circle cx="108" cy="87" r="1" fill="white"/>
+
+  <!-- Four face dots exactly as positioned in reference -->
+  <circle cx="87" cy="105" r="1.5" fill="white"/>
+  <circle cx="113" cy="105" r="1.5" fill="white"/>
+  <circle cx="85" cy="120" r="1.5" fill="white"/>
+  <circle cx="115" cy="120" r="1.5" fill="white"/>
+
+  <!-- Central nose circle exactly as shown -->
+  <circle cx="100" cy="110" r="10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- T-shaped nose line exactly as shown -->
+  <line x1="100" y1="105" x2="100" y2="115" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</svg>
